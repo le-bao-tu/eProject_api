@@ -70,7 +70,7 @@ namespace Business.Account
                     return new ResponseError(Code.BadRequest, "Thông tin trường passcode không được để trống!");
                 }
 
-                var data = await _myDbContext.Account.FirstOrDefaultAsync(x => x.TolenChangePassword.Equals(passcode));
+                var data = await _myDbContext.Account.FirstOrDefaultAsync(x => x.TokenChangePassword.Equals(passcode));
                 if (data == null)
                 {
                     return new ResponseError(Code.BadRequest, "Mã truy cập không hợp lệ! vui lòng thử lại");
@@ -129,7 +129,7 @@ namespace Business.Account
 
                 Random r = new Random();
                 string num = r.Next(0, 9999).ToString();
-                data.TolenChangePassword = num;
+                data.TokenChangePassword = num;
                 _myDbContext.Account.Update(data);
                 int rs = await _myDbContext.SaveChangesAsync();
                 if (rs == 0)
@@ -141,7 +141,7 @@ namespace Business.Account
                 string to = data.Email; //To address
                 string from = "lebaotu05122002@gmail.com"; //From address
                 var ms = data.UserName;
-                var change_pass_word = data.TolenChangePassword;
+                var change_pass_word = data.TokenChangePassword;
                 MailMessage message = new MailMessage(from, to);
                 message.IsBodyHtml = true;
                 message.Subject = "LEBAOTU - COMPANY";
@@ -392,7 +392,7 @@ namespace Business.Account
                 }
 
                 model.Password = Utils.EncryptSha256(model.Password);
-                model.DateTime = DateTime.Now;
+                model.CreatedDate = DateTime.Now;
                 model.TimeLock = DateTime.Now;
 
                 var dataMap = AutoMapperUtils.AutoMap<AccountCreateModel, Data.DataModel.Account>(model);
@@ -442,7 +442,8 @@ namespace Business.Account
                     data.Email = model.Email;
                     data.Phone = model.Phone;
                     data.Avatar = model.Avatar;
-                    data.DateTime = DateTime.Now;
+                    data.CreatedDate = model.CreatedDate;
+                    data.UpdatedDate = DateTime.Now;
                     data.Sate = model.Sate;
                     data.CountError = model.CountError;
                     data.TimeLock = model.TimeLock;
@@ -466,7 +467,8 @@ namespace Business.Account
                     data.Email = model.Email;
                     data.Phone = model.Phone;
                     data.Avatar = model.Avatar;
-                    data.DateTime = DateTime.Now;
+                    data.CreatedDate = model.CreatedDate;
+                    data.UpdatedDate = DateTime.Now;
                     data.Sate = model.Sate;
                     data.CountError = model.CountError;
                     data.TimeLock = model.TimeLock;

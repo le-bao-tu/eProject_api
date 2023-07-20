@@ -19,7 +19,10 @@ namespace Data.Migrations
                     phone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     birtday = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    createdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     state = table.Column<bool>(type: "bit", nullable: false),
                     countError = table.Column<int>(type: "int", nullable: false),
                     timelock = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -38,7 +41,9 @@ namespace Data.Migrations
                     category_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     categoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     status = table.Column<bool>(type: "bit", nullable: false),
-                    image = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    createdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,7 +59,9 @@ namespace Data.Migrations
                     amount = table.Column<float>(type: "real", nullable: true),
                     date_time = table.Column<DateTime>(type: "datetime2", nullable: true),
                     bank = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    image = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    createdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -81,6 +88,8 @@ namespace Data.Migrations
                     address_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    createdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     accountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -105,6 +114,7 @@ namespace Data.Migrations
                     salePrice = table.Column<float>(type: "real", nullable: true),
                     status = table.Column<bool>(type: "bit", nullable: false),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     categoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -127,7 +137,8 @@ namespace Data.Migrations
                     phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    date_time = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    createdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     state = table.Column<int>(type: "int", nullable: true),
                     cancellation_reason = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     feedback = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -166,6 +177,8 @@ namespace Data.Migrations
                     timelock = table.Column<DateTime>(type: "datetime2", nullable: true),
                     islock = table.Column<bool>(type: "bit", nullable: false),
                     tokenChange_password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    createdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     roleId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -185,6 +198,8 @@ namespace Data.Migrations
                     commentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     question = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     answer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    createdDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     accountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     productId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },

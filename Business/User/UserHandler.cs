@@ -44,7 +44,7 @@ namespace Business.User
                 }
 
                 userModel.Password = Utils.EncryptSha256(userModel.Password);
-                userModel.DateTime = DateTime.Now;
+                userModel.CreatedDate = DateTime.Now;
                 userModel.TimeLock = DateTime.Now;
 
                 var dataMap = AutoMapperUtils.AutoMap<UserCreateModel, Users>(userModel);
@@ -86,7 +86,7 @@ namespace Business.User
                 Random r = new Random();
                 string num = r.Next(0, 9999).ToString();
 
-                data.TolenChangePassword = num;
+                data.TokenChangePassword = num;
                 _myDbContext.User.Update(data);
                 int rs = await _myDbContext.SaveChangesAsync();
                 if (rs == 0)
@@ -98,7 +98,7 @@ namespace Business.User
                 string to = data.Email; //To address
                 string from = "lebaotu05122002@gmail.com"; //From address
                 var ms = data.UserName;
-                var change_pass_word = data.TolenChangePassword;
+                var change_pass_word = data.TokenChangePassword;
                 MailMessage message = new MailMessage(from, to);
                 message.IsBodyHtml = true;
                 message.Subject = "LEBAOTU - COMPANY";
@@ -254,7 +254,7 @@ namespace Business.User
                     return new ResponseError(Code.BadRequest, "Thông tin trường passcode không được để trống!");
                 }
 
-                var data = await _myDbContext.User.FirstOrDefaultAsync(x => x.TolenChangePassword.Equals(passcode));
+                var data = await _myDbContext.User.FirstOrDefaultAsync(x => x.TokenChangePassword.Equals(passcode));
                 if (data == null)
                 {
                     return new ResponseError(Code.BadRequest, "Mã truy cập không hợp lệ! vui lòng thử lại");
@@ -356,7 +356,8 @@ namespace Business.User
                     data.Email = userModel.Email;
                     data.Phone = userModel.Phone;
                     data.Avatar = userModel.Avatar;
-                    data.DateTime = DateTime.Now;
+                    data.CreatedDate = userModel.CreatedDate;
+                    data.UpdatedDate = DateTime.Now;
                     data.Sate = userModel.Sate;
                     data.CountError = userModel.CountError;
                     data.TimeLock = userModel.TimeLock;
@@ -382,7 +383,8 @@ namespace Business.User
                         data.Email = userModel.Email;
                         data.Phone = userModel.Phone;
                         data.Avatar = userModel.Avatar;
-                        data.DateTime = DateTime.Now;
+                        data.CreatedDate = userModel.CreatedDate;
+                        data.UpdatedDate = DateTime.Now;
                         data.Sate = userModel.Sate;
                         data.CountError = userModel.CountError;
                         data.TimeLock = userModel.TimeLock;
@@ -407,7 +409,8 @@ namespace Business.User
                         data.Email = userModel.Email;
                         data.Phone = userModel.Phone;
                         data.Avatar = userModel.Avatar;
-                        data.DateTime = DateTime.Now;
+                        data.CreatedDate = userModel.CreatedDate;
+                        data.UpdatedDate = DateTime.Now;
                         data.Sate = userModel.Sate;
                         data.CountError = userModel.CountError;
                         data.TimeLock = userModel.TimeLock;

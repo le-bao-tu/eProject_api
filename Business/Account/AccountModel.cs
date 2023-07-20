@@ -26,12 +26,16 @@ namespace Business.Account
 
         public string? Avatar { get; set; }
 
-        public DateTime? DateTime { get; set; }
+        public DateTime? Birthday { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
 
         public string? Password { get; set; }
 
         public string? Address { get; set; }
-
+          
         public bool Sate { get; set; } = true;
 
         public int CountError { get; set; }
@@ -40,6 +44,6 @@ namespace Business.Account
 
         public bool IsLock { get; set; }
 
-        public string? TolenChangePassword { get; set; }
+        public string? TokenChangePassword { get; set; }
     }
 }

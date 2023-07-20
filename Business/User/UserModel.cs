@@ -26,7 +26,7 @@ namespace Business.User
 
         public string? Avatar { get; set; }
 
-        public DateTime? DateTime { get; set; }
+        public DateTime? Birthday { get; set; }
 
         public string? Password { get; set; }
 
@@ -38,7 +38,12 @@ namespace Business.User
 
         public bool IsLock { get; set; }
 
-        public string? TolenChangePassword { get; set; }
+        public string? TokenChangePassword { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
+
 
         /// <summary>
         /// khóa ngoại tham chiếu đến bảng Roles

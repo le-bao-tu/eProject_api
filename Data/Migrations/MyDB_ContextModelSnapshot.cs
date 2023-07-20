@@ -29,17 +29,25 @@ namespace Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("account_id");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("address");
+
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("avatar");
+
+                    b.Property<DateTime?>("Birthday")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("birtday");
 
                     b.Property<int>("CountError")
                         .HasColumnType("int")
                         .HasColumnName("countError");
 
-                    b.Property<DateTime?>("DateTime")
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2")
-                        .HasColumnName("birtday");
+                        .HasColumnName("createdDate");
 
                     b.Property<string>("Email")
                         .HasMaxLength(50)
@@ -67,9 +75,13 @@ namespace Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("timelock");
 
-                    b.Property<string>("TolenChangePassword")
+                    b.Property<string>("TokenChangePassword")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("tokenChange_password");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updatedDate");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(50)
@@ -96,10 +108,18 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("address");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("createdDate");
+
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("image");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updatedDate");
 
                     b.HasKey("AddressId");
 
@@ -120,6 +140,10 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("categoryName");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("createdDate");
+
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -128,6 +152,10 @@ namespace Data.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit")
                         .HasColumnName("status");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updatedDate");
 
                     b.HasKey("CategoryId");
 
@@ -149,6 +177,10 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("answer");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("createdDate");
+
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("productId");
@@ -156,6 +188,10 @@ namespace Data.Migrations
                     b.Property<string>("Question")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("question");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updatedDate");
 
                     b.HasKey("CommentId");
 
@@ -185,9 +221,9 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("cancellation_reason");
 
-                    b.Property<DateTime?>("DateTime")
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2")
-                        .HasColumnName("date_time");
+                        .HasColumnName("createdDate");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)")
@@ -212,6 +248,10 @@ namespace Data.Migrations
                     b.Property<float?>("TotalPrice")
                         .HasColumnType("real")
                         .HasColumnName("totalPrice");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updatedDate");
 
                     b.HasKey("OrderId");
 
@@ -269,6 +309,10 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("bank");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("createdDate");
+
                     b.Property<DateTime?>("DateTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("date_time");
@@ -280,6 +324,10 @@ namespace Data.Migrations
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Type");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updatedDate");
 
                     b.HasKey("PaymentId");
 
@@ -333,6 +381,10 @@ namespace Data.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("status");
 
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updatedDate");
+
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
@@ -374,13 +426,17 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("avatar");
 
+                    b.Property<DateTime?>("Birthday")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("birtday");
+
                     b.Property<int>("CountError")
                         .HasColumnType("int")
                         .HasColumnName("countError");
 
-                    b.Property<DateTime?>("DateTime")
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2")
-                        .HasColumnName("birtday");
+                        .HasColumnName("createdDate");
 
                     b.Property<string>("Email")
                         .HasMaxLength(50)
@@ -412,9 +468,13 @@ namespace Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("timelock");
 
-                    b.Property<string>("TolenChangePassword")
+                    b.Property<string>("TokenChangePassword")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("tokenChange_password");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updatedDate");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(50)

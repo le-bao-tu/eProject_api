@@ -29,7 +29,7 @@ namespace Data.DataModel
         public string? Avatar { get; set; }
 
         [Column("birtday")]
-        public DateTime? DateTime { get; set; }
+        public DateTime? Birthday { get; set; }
 
         [Column("password")]
         public string? Password { get; set; }
@@ -47,7 +47,13 @@ namespace Data.DataModel
         public bool IsLock { get; set; }
 
         [Column("tokenChange_password")]
-        public string? TolenChangePassword { get; set; }
+        public string? TokenChangePassword { get; set; }
+
+        [Column("createdDate")]
+        public DateTime? CreatedDate { get; set; }
+
+        [Column("updatedDate")]
+        public DateTime? UpdatedDate { get; set; }
 
         /// <summary>
         /// khóa ngoại tham chiếu đến bảng Roles

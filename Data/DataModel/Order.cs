@@ -27,8 +27,11 @@ namespace Data.DataModel
         [Column("address")]
         public string? Address { get; set; }
 
-        [Column("date_time")]
-        public DateTime? DateTime { get; set; }
+        [Column("createdDate")]
+        public DateTime? CreatedDate { get; set; }
+
+        [Column("updatedDate")]
+        public DateTime? UpdatedDate { get; set; }
 
         [Column("state")]
         public int? State { get; set; } = 0;
