@@ -22,7 +22,6 @@ namespace Business.Account
         /// đăng nhập 
         /// </summary>
         /// <param name="model"></param>
-        /// 
         /// <returns></returns>
         Task<Response> Login(AccountModel model);
 

@@ -29,5 +29,11 @@ namespace Data.DataModel
 
         [Column("image")]
         public string? Image { get; set; }
+
+        [Column("createdDate")]
+        public DateTime? CreatedDate { get; set; }
+
+        [Column("updatedDate")]
+        public DateTime? UpdatedDate { get; set; }
     }
 }

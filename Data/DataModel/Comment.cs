@@ -16,6 +16,12 @@ namespace Data.DataModel
         [Column("answer")]
         public string? Answer { get; set; }
 
+        [Column("createdDate")]
+        public DateTime? CreatedDate { get; set; }
+
+        [Column("updatedDate")]
+        public DateTime? UpdatedDate { get; set; }
+
         /// <summary>
         /// khó ngoại tham chiếu đến bảng account
         /// </summary>
