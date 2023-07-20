@@ -431,11 +431,11 @@ namespace Business.User
             }
         }
 
-        public async Task<Response> DeleteUser(string userId)
+        public async Task<Response> DeleteUser(Guid? userId)
         {
             try
             {
-                if(String.IsNullOrEmpty(userId))
+                if(userId == null)
                 {
                     return new ResponseError(Code.BadRequest , "Thông tin trường userId không được để trống!");
                 }
@@ -450,7 +450,7 @@ namespace Business.User
                 int rs = await _myDbContext.SaveChangesAsync();
                 if(rs > 0)
                 {
-                    return new ResponseObject<string>(userId , $"Xóa tài khoản thnahf công : {userId}", Code.Success);
+                    return new ResponseObject<Guid?>(userId , $"Xóa tài khoản thnahf công : {userId}", Code.Success);
                 }
                 return new ResponseError(Code.ServerError, "Xóa tài khoản thất bại");
             }

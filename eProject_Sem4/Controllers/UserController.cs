@@ -121,7 +121,7 @@ namespace eProject_Sem4.Controllers
         [HttpGet]
         [Route("delete-user")]
         [ProducesResponseType(typeof(ResponseObject<string>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeleteUser(string userId)
+        public async Task<IActionResult> DeleteUser(Guid? userId)
         {
             return Ok(await _userHandler.DeleteUser(userId));
         }
