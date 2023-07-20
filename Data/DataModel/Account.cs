@@ -31,6 +31,9 @@ namespace Data.DataModel
         [Column("password")]
         public string? Password { get; set; }
 
+        [Column("address")]
+        public string? Address { get; set; }
+
         [Column("state")]
         public bool Sate { get; set; } = true;
 

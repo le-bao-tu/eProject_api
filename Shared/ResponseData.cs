@@ -104,7 +104,11 @@ namespace Shared
             CountError = countError;
         }
     }
-
+    public class PageModel
+    {
+        public int? PageNumaber { get; set; }
+        public int? PageSize { get; set; }
+    }
     public class Regexs
     {
         // chuỗi regex chỉ cho phép nhập vào định dạng ngày , tháng , năm (dd/MM/yyyy)

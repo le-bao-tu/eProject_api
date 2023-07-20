@@ -56,6 +56,6 @@ namespace Business.User
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<Response> DeleteUser(string userId);
+        Task<Response> DeleteUser(Guid? userId);
     }
 }
