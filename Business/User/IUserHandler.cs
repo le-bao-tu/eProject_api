@@ -35,7 +35,7 @@ namespace Business.User
         /// </summary>
         /// <param name="passcode"></param>
         /// <returns></returns>
-        Task<Response> CheckPassCode(string passcode);
+        Task<Response> CheckPassCode(Guid? userId ,string passcode);
 
         /// <summary>
         /// change password 

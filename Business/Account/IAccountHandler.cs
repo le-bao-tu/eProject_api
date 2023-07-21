@@ -65,7 +65,7 @@ namespace Business.Account
         /// </summary>
         /// <param name="passcode"></param>
         /// <returns></returns>
-        Task<Response> CheckPassCode(string passcode);
+        Task<Response> CheckPassCode(Guid? accountId ,string passcode);
 
         /// <summary>
         /// check passcode thay đổi mật khẩu
