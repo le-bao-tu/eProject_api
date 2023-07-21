@@ -1,33 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Data.DataModel
+namespace Business.AddressAccount
 {
-    [Table("AddressAccount")]
-    public class AddressAccount
+    public class AddressAccountModel
     {
-        [Key]
-        [Column("address_id")]
         public Guid? AddressId { get; set; } = Guid.NewGuid();
 
-        [Column("address")]
         public string? Address { get; set; }
 
-        [Column("image")]
         public string? Image { get; set; }
 
-        [Column("createdDate")]
         public DateTime? CreatedDate { get; set; }
 
-        [Column("updatedDate")]
         public DateTime? UpdatedDate { get; set; }
 
         /// <summary>
         /// khóa ngoại tham chiếu đến bảng Account
         /// </summary>
-        [Column("accountId")]
         public Guid? AccountId { get; set; }
-        [ForeignKey("AccountId")]
-        public virtual Account? Account { get; set; }
     }
 }

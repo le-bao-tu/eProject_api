@@ -2,6 +2,8 @@
 using AspNetCoreRateLimit;
 using AutoMapper;
 using Business.Account;
+using Business.AddressAccount;
+using Business.Payment;
 using Business.User;
 using Data;
 using EasyCaching.InMemory;
@@ -166,6 +168,8 @@ namespace eProject_Sem4
             // chỗ cấu hình handeler (Dependency Injection)
             services.AddScoped<IUserHandler , UserHandler>();
             services.AddScoped<IAccountHandler ,  AccountHandler>();
+            services.AddScoped<IAddressAccountHandler,  AddressAccountHandler>();
+            services.AddScoped<IPaymentHandler, PaymentHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

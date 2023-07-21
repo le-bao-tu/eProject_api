@@ -66,9 +66,9 @@ namespace eProject_Sem4.Controllers
         [HttpGet]
         [Route("check-passcode")]
         [ProducesResponseType(typeof(ResponseObject<String>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CheckPassCode(string passcode)
+        public async Task<IActionResult> CheckPassCode(Guid? userId ,string passcode)
         {
-            return Ok(await _userHandler.CheckPassCode(passcode));
+            return Ok(await _userHandler.CheckPassCode(userId,passcode));
         }
 
         /// <summary>
