@@ -26,7 +26,7 @@ namespace Business.Account
 
         public string? Avatar { get; set; }
 
-        public DateTime? Birthday { get; set; }
+        public string? Birthday { get; set; }
 
         public DateTime? CreatedDate { get; set; }
 

@@ -11,6 +11,7 @@ using System.Text;
 using Data.DataModel;
 using Business.User;
 using FluentValidation;
+using System.Text.RegularExpressions;
 
 namespace Business.Account
 {
@@ -391,13 +392,21 @@ namespace Business.Account
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
 
-                var checkeEmail = _myDbContext.Account.FirstOrDefaultAsync(x => x.Email.Trim().Equals(model.Email));
+                if (!string.IsNullOrEmpty(model.Birthday))
+                {
+                    if (!Regex.IsMatch(model.Birthday, Regexs.DateFormatRule))
+                    {
+                        return new ResponseError(Code.BadRequest, "Nhập sai dữ liệu ngày tháng năm (dd/MM/yyyy)");
+                    }
+                }
+
+                var checkeEmail = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Email.Trim().Equals(model.Email));
                 if(checkeEmail != null)
                 {
                     return new ResponseError(Code.BadRequest, "Email đã tồn tại trong hệ thống");
                 }
 
-                var checkePhone = _myDbContext.Account.FirstOrDefaultAsync(x => x.Phone.Trim().Equals(model.Phone));
+                var checkePhone = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Phone.Trim().Equals(model.Phone));
                 if (checkeEmail != null)
                 {
                     return new ResponseError(Code.BadRequest, "Email đã tồn tại trong hệ thống");
@@ -439,7 +448,13 @@ namespace Business.Account
                     var errorMessage = result.Errors.Select(x => x.ErrorMessage).ToList();
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
-
+                if (!string.IsNullOrEmpty(model.Birthday))
+                {
+                    if (!Regex.IsMatch(model.Birthday, Regexs.DateFormatRule))
+                    {
+                        return new ResponseError(Code.BadRequest, "Nhập sai dữ liệu ngày tháng năm (dd/MM/yyyy)");
+                    }
+                }
                 var data = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Id.Equals(model.Id));
                 if(data == null)
                 {
