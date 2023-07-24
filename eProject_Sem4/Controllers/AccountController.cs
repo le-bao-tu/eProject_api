@@ -93,7 +93,7 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAccountById(Guid? accountId)
         {
-            return Ok(await _accountHandler.DeleteAccount(accountId));
+            return Ok(await _accountHandler.GetAccountById(accountId));
         }
 
         /// <summary>
