@@ -55,14 +55,63 @@ namespace Business.Comment
             }
         }
 
-        public Task<Response> GetAllComment(PageModel model)
+        public async Task<Response> GetAllComment(PageModel model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var data = await _myDbContext.Comment.ToListAsync();
+                if (model.PageSize.HasValue && model.PageNumaber.HasValue)
+                {
+                    if (model.PageSize <= 0)
+                    {
+                        model.PageSize = 0;
+                    }
+
+                    int excludeRows = (model.PageNumaber.Value - 1) * (model.PageSize.Value);
+                    if (excludeRows <= 0)
+                    {
+                        excludeRows = 0;
+                    }
+                    data = data.Skip(excludeRows).Take(model.PageSize.Value).ToList();
+                }
+
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Comment, CommentModel>(data);
+                return new ResponseObject<List<CommentModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
         }
 
-        public Task<Response> InsertComment(CommentModel model)
+        public  async Task<Response> InsertComment(CommentModel model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                model.CreatedDate = DateTime.Now;
+                if(model.AccountId == null)
+                {
+                    return new ResponseError(Code.BadRequest, $"Thông tin trường accountId không được để trống!");
+                }
+                if(model.ProductId == null)
+                {
+                    return new ResponseError(Code.BadRequest, $"Thông tin trường productId không được để trống!");
+                }
+                var dataMap = AutoMapperUtils.AutoMap<CommentModel, Data.DataModel.Comment>(model);
+                _myDbContext.Comment.Add(dataMap);
+                int rs = await _myDbContext.SaveChangesAsync();
+                if(rs > 1)
+                {
+                    return new ResponseObject<CommentModel>(model, $"{Message.CreateSuccess}",Code.Success);
+                }
+                return new ResponseError(Code.ServerError, $"{Message.CreateError}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
         }
 
         public Task<Response> UpdateComment(CommentModel model)

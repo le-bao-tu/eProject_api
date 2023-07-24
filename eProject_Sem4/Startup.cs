@@ -162,8 +162,8 @@ namespace eProject_Sem4
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // chỗ cấu hình hangfire
-            services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("MyDB")));
-            services.AddHangfireServer();
+            //services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("MyDB")));
+            //services.AddHangfireServer();
 
             // chỗ cấu hình handeler (Dependency Injection)
             services.AddScoped<IUserHandler , UserHandler>();
@@ -216,7 +216,7 @@ namespace eProject_Sem4
                 endpoints.MapControllers();
             });
 
-            app.UseHangfireDashboard();
+            //app.UseHangfireDashboard()/*;*/
         }
 
         #region
