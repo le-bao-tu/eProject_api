@@ -409,7 +409,7 @@ namespace Business.Account
                 var checkePhone = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Phone.Trim().Equals(model.Phone));
                 if (checkeEmail != null)
                 {
-                    return new ResponseError(Code.BadRequest, "Email đã tồn tại trong hệ thống");
+                    return new ResponseError(Code.BadRequest, "Phone đã tồn tại trong hệ thống");
                 }
 
                 model.Password = Utils.EncryptSha256(model.Password);

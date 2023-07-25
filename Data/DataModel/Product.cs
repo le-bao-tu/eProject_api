@@ -38,6 +38,9 @@ namespace Data.DataModel
         [Column("image")]
         public string? Image { get; set; }
 
+        [Column("description")]
+        public string? Description { get; set; }
+
         /// <summary>
         /// khóa ngoại tham chiếu đến bảng category
         /// </summary>
