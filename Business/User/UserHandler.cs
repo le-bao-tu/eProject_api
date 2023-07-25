@@ -37,20 +37,6 @@ namespace Business.User
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
 
-                if (userModel.Avatar != null)
-                { 
-                    // Save the file to a location or process it as needed.
-                   // For example, you can save it to the "wwwroot/images" folder:
-                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-                    string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(userModel.Avatar.FileName);
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await userModel.Avatar.CopyToAsync(fileStream);
-                    }
-                }
-
                 var checkData = await _myDbContext.User.FirstOrDefaultAsync(x => x.Email.Equals(userModel.Email) || x.Phone.Equals(userModel.Phone));
                 if (checkData != null)
                 {
@@ -380,7 +366,7 @@ namespace Business.User
                     data.Password = data.Password;
                     data.Email = userModel.Email;
                     data.Phone = userModel.Phone;
-                    data.Avatar = userModel.Avatar.ToString();
+                    data.Avatar = userModel.Avatar?.ToString();
                     data.CreatedDate = userModel.CreatedDate;
                     data.UpdatedDate = DateTime.Now;
                     data.Sate = userModel.Sate;
@@ -407,7 +393,7 @@ namespace Business.User
                         data.Password = userModel.Password;
                         data.Email = userModel.Email;
                         data.Phone = userModel.Phone;
-                        data.Avatar = userModel.Avatar?.FileName;
+                        data.Avatar = userModel.Avatar?.ToString();
                         data.CreatedDate = userModel.CreatedDate;
                         data.UpdatedDate = DateTime.Now;
                         data.Sate = userModel.Sate;
@@ -433,7 +419,7 @@ namespace Business.User
                         data.Password = userModel.Password;
                         data.Email = userModel.Email;
                         data.Phone = userModel.Phone;
-                        data.Avatar = userModel.Avatar.ToString();
+                        data.Avatar = userModel.Avatar?.ToString();
                         data.CreatedDate = userModel.CreatedDate;
                         data.UpdatedDate = DateTime.Now;
                         data.Sate = userModel.Sate;
@@ -481,6 +467,22 @@ namespace Business.User
                     return new ResponseObject<Guid?>(userId , $"Xóa tài khoản thnahf công : {userId}", Code.Success);
                 }
                 return new ResponseError(Code.ServerError, "Xóa tài khoản thất bại");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> GetAllUser()
+        {
+            try
+            {
+                var data = await _myDbContext.User.ToListAsync();
+
+                var dataMap = AutoMapperUtils.AutoMap<Users, UserCreateModel>(data);
+                return new ResponseObject<List<UserCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {
