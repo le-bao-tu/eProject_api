@@ -4,6 +4,8 @@ using AutoMapper;
 using Business.Account;
 using Business.Category;
 using Business.Product;
+using Business.AddressAccount;
+using Business.Payment;
 using Business.User;
 using Data;
 using EasyCaching.InMemory;
@@ -162,14 +164,17 @@ namespace eProject_Sem4
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // chỗ cấu hình hangfire
-            services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("MyDB")));
-            services.AddHangfireServer();
+            //services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("MyDB")));
+            //services.AddHangfireServer();
 
             // chỗ cấu hình handeler (Dependency Injection)
             services.AddScoped<IUserHandler , UserHandler>();
             services.AddScoped<IAccountHandler ,  AccountHandler>();
             services.AddScoped<ICategoryHandler , CategoryHandler>();
             services.AddScoped<IProductHandler , ProductHandler>();
+            services.AddScoped<IAddressAccountHandler,  AddressAccountHandler>();
+            services.AddScoped<IPaymentHandler, PaymentHandler>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -216,7 +221,7 @@ namespace eProject_Sem4
                 endpoints.MapControllers();
             });
 
-            app.UseHangfireDashboard();
+            //app.UseHangfireDashboard()/*;*/
         }
 
         #region

@@ -9,7 +9,14 @@ namespace Business.User
         /// </summary>
         /// <param name="userModel"></param>
         /// <returns></returns>
-        Task<Response> Login(UserModel userModel);
+        Task<Response> Login(UserModel model);
+
+        /// <summary>
+        /// Lấy ra danh sách user 
+        /// </summary>
+        /// <param name="pageModel"></param>
+        /// <returns></returns>
+        Task<Response> GetAllUser();
 
         /// <summary>
         /// thêm mới tài khoản 
@@ -17,12 +24,14 @@ namespace Business.User
         /// <param name="userModel"></param>
         /// <returns></returns>
         Task<Response> CreateUser(UserCreateModel userModel);
+
         /// <summary>
         /// cập nhật tài khoản 
         /// </summary>
         /// <param name="userModel"></param>
         /// <returns></returns>
         Task<Response> UpdateUser(UserCreateModel userModel);
+
         /// <summary>
         /// lấy mã code 
         /// </summary>
@@ -35,7 +44,7 @@ namespace Business.User
         /// </summary>
         /// <param name="passcode"></param>
         /// <returns></returns>
-        Task<Response> CheckPassCode(string passcode);
+        Task<Response> CheckPassCode(Guid? userId ,string passcode);
 
         /// <summary>
         /// change password 

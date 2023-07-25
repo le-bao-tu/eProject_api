@@ -113,7 +113,7 @@ namespace Business.User
                 client.Credentials = basicCredential1;
 
                 client.Send(message);
-                return new Response(Code.Success, "Gửi mã thành công ");
+                return new ResponseObject<Guid?>(data.Id, "Gửi mã thành công",Code.Success);
             }
             catch (Exception ex)
             {
@@ -245,19 +245,30 @@ namespace Business.User
             }
         }
 
-        public async Task<Response> CheckPassCode(string passcode)
+        public async Task<Response> CheckPassCode(Guid? userId, string passcode)
         {
             try
             {
+                if(userId == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin trường userId không được để trống!");
+                }
+
                 if (String.IsNullOrEmpty(passcode))
                 {
                     return new ResponseError(Code.BadRequest, "Thông tin trường passcode không được để trống!");
                 }
+              
+                var data = await _myDbContext.User.FirstOrDefaultAsync(x => x.Id.Equals(userId));
 
-                var data = await _myDbContext.User.FirstOrDefaultAsync(x => x.TokenChangePassword.Equals(passcode));
                 if (data == null)
                 {
-                    return new ResponseError(Code.BadRequest, "Mã truy cập không hợp lệ! vui lòng thử lại");
+                    return new ResponseError(Code.BadRequest, "Thông tin tài khoản không tồn tại trong hệ thống!");
+                }
+
+                if(!data.TokenChangePassword.Contains(passcode))
+                {
+                    return new ResponseError(Code.BadRequest, "Mã truy cập không hợp lệ! Vui lòng thử lại");
                 }
 
                 return new ResponseObject<Guid?>(data.Id, "Mã truy cập hợp lệ", Code.Success);
@@ -355,7 +366,7 @@ namespace Business.User
                     data.Password = data.Password;
                     data.Email = userModel.Email;
                     data.Phone = userModel.Phone;
-                    data.Avatar = userModel.Avatar;
+                    data.Avatar = userModel.Avatar?.ToString();
                     data.CreatedDate = userModel.CreatedDate;
                     data.UpdatedDate = DateTime.Now;
                     data.Sate = userModel.Sate;
@@ -382,7 +393,7 @@ namespace Business.User
                         data.Password = userModel.Password;
                         data.Email = userModel.Email;
                         data.Phone = userModel.Phone;
-                        data.Avatar = userModel.Avatar;
+                        data.Avatar = userModel.Avatar?.ToString();
                         data.CreatedDate = userModel.CreatedDate;
                         data.UpdatedDate = DateTime.Now;
                         data.Sate = userModel.Sate;
@@ -408,7 +419,7 @@ namespace Business.User
                         data.Password = userModel.Password;
                         data.Email = userModel.Email;
                         data.Phone = userModel.Phone;
-                        data.Avatar = userModel.Avatar;
+                        data.Avatar = userModel.Avatar?.ToString();
                         data.CreatedDate = userModel.CreatedDate;
                         data.UpdatedDate = DateTime.Now;
                         data.Sate = userModel.Sate;
@@ -456,6 +467,22 @@ namespace Business.User
                     return new ResponseObject<Guid?>(userId , $"Xóa tài khoản thnahf công : {userId}", Code.Success);
                 }
                 return new ResponseError(Code.ServerError, "Xóa tài khoản thất bại");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> GetAllUser()
+        {
+            try
+            {
+                var data = await _myDbContext.User.ToListAsync();
+
+                var dataMap = AutoMapperUtils.AutoMap<Users, UserCreateModel>(data);
+                return new ResponseObject<List<UserCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {

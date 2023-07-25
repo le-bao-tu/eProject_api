@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace Business.User
 
         public string? Phone { get; set; }
 
-        public string? Avatar { get; set; }
+        public byte[]? Avatar { get; set; }
 
         public DateTime? Birthday { get; set; }
 

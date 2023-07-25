@@ -8,6 +8,7 @@ namespace eProject_Sem4.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1", IgnoreApi = false)]
     public class AccountController : ControllerBase
     {
         private IAccountHandler _accountHandler;
@@ -23,7 +24,6 @@ namespace eProject_Sem4.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        [Authorize]
         [Route("getall-account")]
         [ProducesResponseType(typeof(ResponseObject<List<AccountCreateModel>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllAccount(PageModel model)
@@ -93,7 +93,7 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAccountById(Guid? accountId)
         {
-            return Ok(await _accountHandler.DeleteAccount(accountId));
+            return Ok(await _accountHandler.GetAccountById(accountId));
         }
 
         /// <summary>
@@ -130,9 +130,9 @@ namespace eProject_Sem4.Controllers
         [HttpGet]
         [Route("check-pass-code")]
         [ProducesResponseType(typeof(ResponseObject<string>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CheckPassCode(string passcode)
+        public async Task<IActionResult> CheckPassCode(Guid? accountId,string passcode)
         {
-            return Ok(await _accountHandler.CheckPassCode(passcode));
+            return Ok(await _accountHandler.CheckPassCode(accountId , passcode));
         }
 
         /// <summary>

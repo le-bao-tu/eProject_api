@@ -11,6 +11,7 @@ using System.Text;
 using Data.DataModel;
 using Business.User;
 using FluentValidation;
+using System.Text.RegularExpressions;
 
 namespace Business.Account
 {
@@ -61,20 +62,32 @@ namespace Business.Account
             }
         }
 
-        public async Task<Response> CheckPassCode(string passcode)
+        public async Task<Response> CheckPassCode(Guid? accountId, string passcode)
         {
             try
             {
+                if (accountId == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin trường userId không được để trống!");
+                }
+
                 if (String.IsNullOrEmpty(passcode))
                 {
                     return new ResponseError(Code.BadRequest, "Thông tin trường passcode không được để trống!");
                 }
 
-                var data = await _myDbContext.Account.FirstOrDefaultAsync(x => x.TokenChangePassword.Equals(passcode));
+                var data = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Id.Equals(accountId));
+
                 if (data == null)
                 {
-                    return new ResponseError(Code.BadRequest, "Mã truy cập không hợp lệ! vui lòng thử lại");
+                    return new ResponseError(Code.BadRequest, "Thông tin tài khoản không tồn tại trong hệ thống!");
                 }
+
+                if (!data.TokenChangePassword.Contains(passcode))
+                {
+                    return new ResponseError(Code.BadRequest, "Mã truy cập không hợp lệ! Vui lòng thử lại");
+                }
+
                 return new ResponseObject<Guid?>(data.Id, "Mã truy cập hợp lệ", Code.Success);
             }
             catch (Exception ex)
@@ -156,7 +169,7 @@ namespace Business.Account
                 client.Credentials = basicCredential1;
 
                 client.Send(message);
-                return new Response(Code.Success, "Gửi mã thành công ");
+                return new ResponseObject<Guid?>(data.Id, "Gửi mã thành công",Code.Success);
 
             }
             catch (Exception ex)
@@ -379,6 +392,17 @@ namespace Business.Account
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
 
+<<<<<<< HEAD
+=======
+                if (!string.IsNullOrEmpty(model.Birthday))
+                {
+                    if (!Regex.IsMatch(model.Birthday, Regexs.DateFormatRule))
+                    {
+                        return new ResponseError(Code.BadRequest, "Nhập sai dữ liệu ngày tháng năm (dd/MM/yyyy)");
+                    }
+                }
+
+>>>>>>> f2a16f31808d218bfde0936a1095aad571267e69
                 var checkeEmail = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Email.Trim().Equals(model.Email));
                 if(checkeEmail != null)
                 {
@@ -427,7 +451,13 @@ namespace Business.Account
                     var errorMessage = result.Errors.Select(x => x.ErrorMessage).ToList();
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
-
+                if (!string.IsNullOrEmpty(model.Birthday))
+                {
+                    if (!Regex.IsMatch(model.Birthday, Regexs.DateFormatRule))
+                    {
+                        return new ResponseError(Code.BadRequest, "Nhập sai dữ liệu ngày tháng năm (dd/MM/yyyy)");
+                    }
+                }
                 var data = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Id.Equals(model.Id));
                 if(data == null)
                 {

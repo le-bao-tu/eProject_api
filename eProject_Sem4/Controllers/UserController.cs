@@ -33,6 +33,19 @@ namespace eProject_Sem4.Controllers
         }
 
         /// <summary>
+        /// Lấy ra danh sách tài khoản 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getAll-user")]
+        [ProducesResponseType(typeof(ResponseObject<List<UserCreateModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllUser()
+        {
+            return Ok(await _userHandler.GetAllUser());
+        }
+
+        /// <summary>
         /// create User
         /// </summary>
         /// <param name="userModel"></param>
@@ -66,9 +79,9 @@ namespace eProject_Sem4.Controllers
         [HttpGet]
         [Route("check-passcode")]
         [ProducesResponseType(typeof(ResponseObject<String>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CheckPassCode(string passcode)
+        public async Task<IActionResult> CheckPassCode(Guid? userId ,string passcode)
         {
-            return Ok(await _userHandler.CheckPassCode(passcode));
+            return Ok(await _userHandler.CheckPassCode(userId,passcode));
         }
 
         /// <summary>
@@ -103,7 +116,6 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("update-user")]
         [ProducesResponseType(typeof(ResponseObject<UserCreateModel>), StatusCodes.Status200OK)]

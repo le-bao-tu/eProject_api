@@ -16,13 +16,13 @@ namespace Data.DataModel
         public Guid? CategoryId { get; set; } = Guid.NewGuid();
 
         [Column("categoryName")]
-        public string CategoryName { get; set; }
+        public string? CategoryName { get; set; }
 
         [Column("status")]
         public bool  Status { get; set; }
 
         [Column("image")]
-        public string Image { get; set; }
+        public string? Image { get; set; }
 
         [Column("createdDate")]
         public DateTime? CreatedDate { get; set; }
