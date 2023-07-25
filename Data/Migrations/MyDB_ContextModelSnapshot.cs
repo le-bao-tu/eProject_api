@@ -233,10 +233,6 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("feedback");
 
-                    b.Property<Guid?>("PaymentId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("paymentId");
-
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("phone");
@@ -256,8 +252,6 @@ namespace Data.Migrations
                     b.HasKey("OrderId");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("PaymentId");
 
                     b.ToTable("Orders");
                 });
@@ -321,6 +315,10 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("image");
 
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("orderId");
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Type");
@@ -330,6 +328,8 @@ namespace Data.Migrations
                         .HasColumnName("updatedDate");
 
                     b.HasKey("PaymentId");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("Payments");
                 });
@@ -342,7 +342,6 @@ namespace Data.Migrations
                         .HasColumnName("productId");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("address");
 
@@ -354,8 +353,11 @@ namespace Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("created_date");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("description");
+
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("image");
 
@@ -364,7 +366,6 @@ namespace Data.Migrations
                         .HasColumnName("price");
 
                     b.Property<string>("ProductName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("productName");
@@ -518,13 +519,7 @@ namespace Data.Migrations
                         .WithMany()
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("Data.DataModel.Payments", "Payments")
-                        .WithMany()
-                        .HasForeignKey("PaymentId");
-
                     b.Navigation("Account");
-
-                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Data.DataModel.OrderDetail", b =>
@@ -540,6 +535,15 @@ namespace Data.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Data.DataModel.Payments", b =>
+                {
+                    b.HasOne("Data.DataModel.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Data.DataModel.Product", b =>

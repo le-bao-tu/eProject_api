@@ -50,12 +50,5 @@ namespace Data.DataModel
         [ForeignKey("AccountId")]
         public virtual Account? Account { get; set; }
 
-        /// <summary>
-        /// khó ngoại tham chiếu đến bảng account
-        /// </summary>
-        [Column("paymentId")]
-        public Guid? PaymentId { get; set; }
-        [ForeignKey("PaymentId")]
-        public virtual Payments? Payments { get; set; }
     }
 }

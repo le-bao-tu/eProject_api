@@ -379,16 +379,16 @@ namespace Business.Account
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
 
-                var checkeEmail = _myDbContext.Account.FirstOrDefaultAsync(x => x.Email.Trim().Equals(model.Email));
+                var checkeEmail = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Email.Trim().Equals(model.Email));
                 if(checkeEmail != null)
                 {
                     return new ResponseError(Code.BadRequest, "Email đã tồn tại trong hệ thống");
                 }
 
-                var checkePhone = _myDbContext.Account.FirstOrDefaultAsync(x => x.Phone.Trim().Equals(model.Phone));
+                var checkePhone = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Phone.Trim().Equals(model.Phone));
                 if (checkeEmail != null)
                 {
-                    return new ResponseError(Code.BadRequest, "Email đã tồn tại trong hệ thống");
+                    return new ResponseError(Code.BadRequest, "Phone đã tồn tại trong hệ thống");
                 }
 
                 model.Password = Utils.EncryptSha256(model.Password);

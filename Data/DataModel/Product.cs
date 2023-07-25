@@ -12,7 +12,7 @@ namespace Data.DataModel
 
         [Column("productName")]
         [StringLength(50)]
-        public string ProductName { get; set; }
+        public string? ProductName { get; set; }
 
         [Column("quantity")]
         public int? Quantity { get; set; }
@@ -21,7 +21,7 @@ namespace Data.DataModel
         public float? Price { get; set; }
 
         [Column("address")]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         [Column("salePrice")]
         public float? SalePrice { get; set; }
@@ -36,7 +36,10 @@ namespace Data.DataModel
         public DateTime? UpdatedDate { get; set; }
 
         [Column("image")]
-        public string Image { get; set; }
+        public string? Image { get; set; }
+
+        [Column("description")]
+        public string? Description { get; set; }
 
         /// <summary>
         /// khóa ngoại tham chiếu đến bảng category

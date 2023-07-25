@@ -35,5 +35,11 @@ namespace Data.DataModel
 
         [Column("updatedDate")]
         public DateTime? UpdatedDate { get; set; }
+
+        [Column("orderId")]
+        public Guid? OrderId { get; set; }
+
+        [ForeignKey("OrderId")]
+        public virtual Order? Order { get; set; }
     }
 }
