@@ -25,7 +25,7 @@ namespace Business.User
 
         public string? Phone { get; set; }
 
-        public IFormFile? Avatar { get; set; }
+        public byte[]? Avatar { get; set; }
 
         public DateTime? Birthday { get; set; }
 
