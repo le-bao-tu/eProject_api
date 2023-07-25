@@ -392,8 +392,6 @@ namespace Business.Account
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
 
-<<<<<<< HEAD
-=======
                 if (!string.IsNullOrEmpty(model.Birthday))
                 {
                     if (!Regex.IsMatch(model.Birthday, Regexs.DateFormatRule))
@@ -402,7 +400,6 @@ namespace Business.Account
                     }
                 }
 
->>>>>>> f2a16f31808d218bfde0936a1095aad571267e69
                 var checkeEmail = await _myDbContext.Account.FirstOrDefaultAsync(x => x.Email.Trim().Equals(model.Email));
                 if(checkeEmail != null)
                 {
