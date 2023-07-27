@@ -157,7 +157,7 @@ namespace Business.Category
                     {
                         await CategoryModel.FileImage.CopyToAsync(fileStream);
                     }
-                    CategoryModel.Image = CategoryModel.FileImage.FileName;
+                    CategoryModel.Image = uniqueFileName;
                 }
 
                 var checkData = await _myDbContext.Category.FirstOrDefaultAsync(x => x.CategoryName.ToLower().Equals(CategoryModel.CategoryName.ToLower()));
@@ -212,8 +212,22 @@ namespace Business.Category
                     data.CategoryId = CategoryModel.CategoryId;
                     data.CategoryName = CategoryModel.CategoryName;
                     data.Status = CategoryModel.Status;
-                    data.Image = CategoryModel.Image;
                     data.UpdatedDate = DateTime.Now;
+
+                    if (CategoryModel.FileImage != null)
+                    {
+                        // Save the file to a location or process it as needed.
+                        // For example, you can save it to the "wwwroot/images" folder:
+                        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                        string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(CategoryModel.FileImage.FileName);
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await CategoryModel.FileImage.CopyToAsync(fileStream);
+                        }
+                        CategoryModel.Image = uniqueFileName;
+                        data.Image = CategoryModel.Image;
+                    }
 
                     _myDbContext.Category.Update(data);
                     int rs = await _myDbContext.SaveChangesAsync();

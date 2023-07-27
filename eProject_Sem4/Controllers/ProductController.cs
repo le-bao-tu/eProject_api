@@ -17,35 +17,6 @@ namespace eProject_Sem4.Controllers
             _productHandler = productHandler;
         }
 
-        public static async Task<string> WriteFile(IFormFile file)
-        {
-            string filename = "";
-            try
-            {
-                var extension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
-                filename = DateTime.Now.Ticks.ToString() + extension;
-
-                var filepath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Images");
-
-                if (!Directory.Exists(filepath))
-                {
-                    Directory.CreateDirectory(filepath);
-                }
-
-                var exactpath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Images", filename);
-                using (var stream = new FileStream(exactpath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-            }
-            catch (Exception ex)
-            {
-                new ResponseError(Code.ServerError, $"{ex.Message}");
-                return "";
-            }
-            return filename;
-        }
-
         [HttpGet]
         /*[Authorize]*/
         [Route("getall-product")]
