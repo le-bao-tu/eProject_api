@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Business.User
 {
@@ -35,6 +36,14 @@ namespace Business.User
                 {
                     var errorMessage = result.Errors.Select(x => x.ErrorMessage).ToList();
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
+                }
+
+                if (!string.IsNullOrEmpty(userModel.Birthday))
+                {
+                    if (!Regex.IsMatch(userModel.Birthday, Regexs.DateFormatRule))
+                    {
+                        return new ResponseError(Code.BadRequest, "Nhập sai dữ liệu ngày tháng năm (dd/MM/yyyy)");
+                    }
                 }
 
                 var checkData = await _myDbContext.User.FirstOrDefaultAsync(x => x.Email.Equals(userModel.Email) || x.Phone.Equals(userModel.Phone));

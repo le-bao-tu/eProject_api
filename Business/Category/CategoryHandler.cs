@@ -1,17 +1,8 @@
-﻿using Business.Account;
-using Business.User;
-using Data;
-using Data.DataModel;
-using Microsoft.AspNetCore.Mvc;
+﻿using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Shared;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mail;
-using System.Security.Claims;
-using System.Text;
 
 namespace Business.Category
 {
@@ -33,14 +24,14 @@ namespace Business.Category
             try
             {
                 var data = await _myDbContext.Category.ToListAsync();
-                if (model.PageSize.HasValue && model.PageNumaber.HasValue)
+                if (model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if (model.PageSize <= 0)
                     {
                         model.PageSize = 0;
                     }
 
-                    int excludeRows = (model.PageNumaber.Value - 1) * (model.PageSize.Value);
+                    int excludeRows = (model.PageNumber.Value - 1) * (model.PageSize.Value);
                     if (excludeRows <= 0)
                     {
                         excludeRows = 0;
@@ -88,7 +79,8 @@ namespace Business.Category
             if (status == true)
             {
                 bitStatus = 1;
-            }else
+            }
+            else
             {
                 bitStatus = 0;
             }
@@ -110,14 +102,14 @@ namespace Business.Category
                     return new ResponseError(Code.ServerError, "Không tìm thấy danh mục!");
                 }
 
-                if (model.PageSize.HasValue && model.PageNumaber.HasValue)
+                if (model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if (model.PageSize <= 0)
                     {
                         model.PageSize = 0;
                     }
 
-                    int excludeRows = (model.PageNumaber.Value - 1) * (model.PageSize.Value);
+                    int excludeRows = (model.PageNumber.Value - 1) * (model.PageSize.Value);
                     if (excludeRows <= 0)
                     {
                         excludeRows = 0;
@@ -208,7 +200,6 @@ namespace Business.Category
                 }
                 else
                 {
-
                     data.CategoryId = CategoryModel.CategoryId;
                     data.CategoryName = CategoryModel.CategoryName;
                     data.Status = CategoryModel.Status;

@@ -106,7 +106,7 @@ namespace Shared
     }
     public class PageModel
     {
-        public int? PageNumaber { get; set; }
+        public int? PageNumber { get; set; }
         public int? PageSize { get; set; }
     }
     public class Regexs
