@@ -27,7 +27,7 @@ namespace Business.User
 
         public byte[]? Avatar { get; set; }
 
-        public DateTime? Birthday { get; set; }
+        public string? Birthday { get; set; }
 
         public string? Password { get; set; }
 

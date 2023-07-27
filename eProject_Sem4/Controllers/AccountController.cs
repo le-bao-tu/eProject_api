@@ -26,7 +26,7 @@ namespace eProject_Sem4.Controllers
         [HttpGet]
         [Route("getall-account")]
         [ProducesResponseType(typeof(ResponseObject<List<AccountCreateModel>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllAccount(PageModel model)
+        public async Task<IActionResult> GetAllAccount([FromQuery]PageModel model)
         {
             return Ok(await _accountHandler.GetAllAccount(model));
         }
@@ -39,7 +39,7 @@ namespace eProject_Sem4.Controllers
         [HttpPost]
         [Route("signup-account")]
         [ProducesResponseType(typeof(ResponseObject<AccountCreateModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> SignUpAccount(AccountCreateModel model)
+        public async Task<IActionResult> SignUpAccount([FromBody]AccountCreateModel model)
         {
             return Ok(await _accountHandler.SingUpAccount(model));
         }

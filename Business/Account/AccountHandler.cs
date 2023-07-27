@@ -255,14 +255,14 @@ namespace Business.Account
             try
             {
                 var data = await _myDbContext.Account.ToListAsync();
-                if(model.PageSize.HasValue && model.PageNumaber.HasValue)
+                if(model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if(model.PageSize <= 0)
                     {
                         model.PageSize = 0;
                     }
 
-                    int excludeRows = (model.PageNumaber.Value - 1) * (model.PageSize.Value);
+                    int excludeRows = (model.PageNumber.Value - 1) * (model.PageSize.Value);
                     if(excludeRows <= 0)
                     {
                         excludeRows = 0;

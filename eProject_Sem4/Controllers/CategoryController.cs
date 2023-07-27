@@ -23,7 +23,6 @@ namespace eProject_Sem4.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpGet]
-        /*[Authorize]*/
         [Route("getall-category")]
         [ProducesResponseType(typeof(ResponseObject<List<CategoryCreateModel>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllCategory([FromQuery] PageModel model)
@@ -80,7 +79,7 @@ namespace eProject_Sem4.Controllers
         [HttpPost]
         [Route("update-category")]
         [ProducesResponseType(typeof(ResponseObject<CategoryCreateModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateCategory(CategoryCreateModel model)
+        public async Task<IActionResult> UpdateCategory([FromBody]CategoryCreateModel model)
         {
             return Ok(await _categoryHandler.UpdateCategory(model));
         }
