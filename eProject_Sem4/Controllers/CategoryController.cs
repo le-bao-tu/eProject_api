@@ -66,7 +66,7 @@ namespace eProject_Sem4.Controllers
         [HttpPost]
         [Route("create-category")]
         [ProducesResponseType(typeof(ResponseObject<CategoryCreateModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateCategory([FromQuery]CategoryCreateModel model)
+        public async Task<IActionResult> CreateCategory(CategoryCreateModel model)
         {
             return Ok(await _categoryHandler.CreateCategory(model));
 

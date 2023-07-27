@@ -177,7 +177,7 @@ namespace Business.Product
                     {
                         await ProductModel.FileImage.CopyToAsync(fileStream);
                     }
-                    ProductModel.Image = ProductModel.FileImage.FileName;
+                    ProductModel.Image = uniqueFileName;
                 }
 
                 var checkData = await _myDbContext.Product.FirstOrDefaultAsync(x => x.ProductName.ToLower().Equals(ProductModel.ProductName.ToLower()));
@@ -236,9 +236,23 @@ namespace Business.Product
                     data.Quantity = ProductModel.Quantity;
                     data.Status = ProductModel.Status;
                     data.Description = ProductModel.Description;
-                    data.Image = ProductModel.Image;
                     data.CategoryId = ProductModel.CategoryId;
                     data.UpdatedDate = DateTime.Now;
+
+                    if (ProductModel.FileImage != null)
+                    {
+                        // Save the file to a location or process it as needed.
+                        // For example, you can save it to the "wwwroot/images" folder:
+                        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                        string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(ProductModel.FileImage.FileName);
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await ProductModel.FileImage.CopyToAsync(fileStream);
+                        }
+                        ProductModel.Image = uniqueFileName;
+                        data.Image = ProductModel.Image;
+                    }
 
                     _myDbContext.Product.Update(data);
                     int rs = await _myDbContext.SaveChangesAsync();
