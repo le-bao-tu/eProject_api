@@ -44,5 +44,12 @@ namespace Business.Product
         /// <param name="ProductId"></param>
         /// <returns></returns>
         Task<Response> DeleteProduct(Guid? ProductId);
+
+        /// <summary>
+        /// lấy sản phẩm theo danh muc
+        /// </summary>
+        /// <param name="CateId"></param>
+        /// <returns></returns>
+        Task<Response> GetProductByCate(Guid? cateId);
     }
 }

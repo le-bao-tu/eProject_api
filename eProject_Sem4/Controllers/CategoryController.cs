@@ -1,6 +1,5 @@
 ﻿using Business.Category;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -8,13 +7,17 @@ namespace eProject_Sem4.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1", IgnoreApi = false)]
+
     public class CategoryController : Controller
     {
         private ICategoryHandler _categoryHandler;
+        private readonly IEasyCachingProviderFactory _cacheFactory;
 
-        public CategoryController(ICategoryHandler categoryHandler)
+        public CategoryController(ICategoryHandler categoryHandler, IEasyCachingProviderFactory cacheFactory)
         {
             _categoryHandler = categoryHandler;
+            _cacheFactory = cacheFactory;
         }
 
         /// <summary>
@@ -31,7 +34,7 @@ namespace eProject_Sem4.Controllers
         }
 
         /// <summary>
-        ///  thêm mới danh mục
+        ///  lấy danh mục theo id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -40,7 +43,19 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<CategoryCreateModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCategoryById(Guid id)
         {
-            return Ok(await _categoryHandler.getCategoryById(id));
+            var cachekey = $"CATEID_{id}";
+            var provider = _cacheFactory.GetCachingProvider("default");
+            var cacheResult = await provider.GetAsync<Response>(cachekey);
+            if (cacheResult != null && cacheResult.HasValue)
+            {
+                return Ok(cacheResult.Value);
+            }
+            var result = await _categoryHandler.getCategoryById(id);
+            if(result.Code == Code.Success )
+            {
+                await provider.SetAsync(cachekey, result, TimeSpan.FromMinutes(10));
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -68,7 +83,6 @@ namespace eProject_Sem4.Controllers
         public async Task<IActionResult> CreateCategory(CategoryCreateModel model)
         {
             return Ok(await _categoryHandler.CreateCategory(model));
-
         }
 
         /// <summary>
@@ -79,13 +93,13 @@ namespace eProject_Sem4.Controllers
         [HttpPost]
         [Route("update-category")]
         [ProducesResponseType(typeof(ResponseObject<CategoryCreateModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateCategory([FromBody]CategoryCreateModel model)
+        public async Task<IActionResult> UpdateCategory([FromBody] CategoryCreateModel model)
         {
             return Ok(await _categoryHandler.UpdateCategory(model));
         }
 
         /// <summary>
-        /// xóa danh mục 
+        /// xóa danh mục
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
@@ -105,6 +119,5 @@ namespace eProject_Sem4.Controllers
             Byte[] b = System.IO.File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\images\\" + image);
             return File(b, "image/jpeg");
         }
-
     }
 }

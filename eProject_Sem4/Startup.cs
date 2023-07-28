@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using Business.Comment;
 
 namespace eProject_Sem4
 {
@@ -174,6 +175,7 @@ namespace eProject_Sem4
             services.AddScoped<IProductHandler , ProductHandler>();
             services.AddScoped<IAddressAccountHandler,  AddressAccountHandler>();
             services.AddScoped<IPaymentHandler, PaymentHandler>();
+            services.AddScoped<ICommentHandler, CommentHandler>();
 
         }
 

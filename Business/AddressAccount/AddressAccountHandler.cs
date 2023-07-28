@@ -61,7 +61,7 @@ namespace Business.AddressAccount
                     return new ResponseError(Code.BadRequest, "Thông tin trường addressId không được để trống");
                 }
 
-                var data = await _myDbContext.AddressAccount.FirstOrDefaultAsync(x => x.AccountId == addressId);
+                var data = await _myDbContext.AddressAccount.FirstOrDefaultAsync(x => x.AddressId == addressId);
                 if (data == null)
                 {
                     return new ResponseError(Code.ServerError, "Dữ liệu trống!");

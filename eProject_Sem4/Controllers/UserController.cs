@@ -1,4 +1,5 @@
 ﻿using Business.User;
+using EasyCaching.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace eProject_Sem4.Controllers
     {
 
         private IUserHandler _userHandler;
+        private readonly IEasyCachingProviderFactory _cacheFactory;
 
-        public UserController(IUserHandler userHandler)
+        public UserController(IUserHandler userHandler, IEasyCachingProviderFactory cacheFactory)
         {
             _userHandler = userHandler;
+            _cacheFactory = cacheFactory;
         }
 
         /// <summary>
@@ -29,7 +32,19 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<String>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Login(UserModel userModel)
         {
-            return Ok(await _userHandler.Login(userModel));
+            var cachekey = $"MODEL_{userModel.Email}_{userModel.Password}";
+            var provider = _cacheFactory.GetCachingProvider("default");
+            var cacheResult = await provider.GetAsync<Response>(cachekey);
+            if(cacheResult != null && cacheResult.HasValue)
+            {
+                return Ok(cacheResult.Value);
+            }
+            var result = await _userHandler.Login(userModel);
+            if(result.Code == Code.Success)
+            {
+                await provider.SetAsync(cachekey, result, TimeSpan.FromMinutes(10));
+            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -108,7 +123,20 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<UserCreateModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByNameToken(string email)
         {
-            return Ok(await _userHandler.GetByNameToken(email));
+            var cachekey = $"EMAIL_{email}";
+            var provider = _cacheFactory.GetCachingProvider("default");
+            var cacheResult = await provider.GetAsync<Response>(cachekey);
+            if(cacheResult != null && cacheResult.HasValue)
+            {
+                return Ok(cacheResult.Value);
+            }
+
+            var result = await _userHandler.GetByNameToken(email);
+            if(result.Code == Code.Success)
+            {
+                await provider.SetAsync(cachekey, result, TimeSpan.FromMinutes(10));
+            }
+            return Ok(result);
         }
 
         /// <summary>

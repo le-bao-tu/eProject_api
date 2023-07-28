@@ -1,4 +1,5 @@
 ﻿using Business.AddressAccount;
+using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -10,10 +11,12 @@ namespace eProject_Sem4.Controllers
     public class AddressController : ControllerBase
     {
         private IAddressAccountHandler _addressAccountHandler;
+        private readonly IEasyCachingProviderFactory _cacheFactory;
 
-        public AddressController(IAddressAccountHandler addressAccountHandler)
+        public AddressController(IAddressAccountHandler addressAccountHandler, IEasyCachingProviderFactory cacheFactory)
         {
             _addressAccountHandler = addressAccountHandler;
+            _cacheFactory = cacheFactory;
         }
 
         /// <summary>
@@ -78,7 +81,19 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<AddressAccountModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAddressById(Guid? addressId)
         {
-            return Ok(await _addressAccountHandler.GetAddressAccountById(addressId));
+            var cachekey = $"ADDRESSID_{addressId}";
+            var provider = _cacheFactory.GetCachingProvider("default");
+            var cacheResult = await provider.GetAsync<Response>(cachekey);
+            if(cacheResult != null && cacheResult.HasValue)
+            {
+                return Ok(cacheResult.Value);
+            }
+            var result = await _addressAccountHandler.GetAddressAccountById(addressId);
+            if(result.Code == Code.Success)
+            {
+                await provider.SetAsync(cachekey, result, TimeSpan.FromHours(10));
+            }
+            return Ok(result);
         }
 
         /// <summary>

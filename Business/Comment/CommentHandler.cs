@@ -1,4 +1,5 @@
 ﻿using Business.Payment;
+using Business.User;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -85,19 +86,18 @@ namespace Business.Comment
             }
         }
 
-        public  async Task<Response> InsertComment(CommentModel model)
+        public async Task<Response> InsertComment(CommentModel model)
         {
             try
             {
-                model.CreatedDate = DateTime.Now;
-                if(model.AccountId == null)
+                var validation = new ValidationCommentModel();
+                var result = await validation.ValidateAsync(model);
+                if (!result.IsValid)
                 {
-                    return new ResponseError(Code.BadRequest, $"Thông tin trường accountId không được để trống!");
+                    var errorMessage = result.Errors.Select(x => x.ErrorMessage).ToList();
+                    return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
-                if(model.ProductId == null)
-                {
-                    return new ResponseError(Code.BadRequest, $"Thông tin trường productId không được để trống!");
-                }
+
                 var dataMap = AutoMapperUtils.AutoMap<CommentModel, Data.DataModel.Comment>(model);
                 _myDbContext.Comment.Add(dataMap);
                 int rs = await _myDbContext.SaveChangesAsync();
@@ -114,9 +114,33 @@ namespace Business.Comment
             }
         }
 
-        public Task<Response> UpdateComment(CommentModel model)
+        public async Task<Response> UpdateComment(CommentModel model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var validation = new ValidationCommentModel();
+                var result = await validation.ValidateAsync(model);
+                if (!result.IsValid)
+                {
+                    var errorMessage = result.Errors.Select(x => x.ErrorMessage).ToList();
+                    return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
+                }
+                var dataMap = AutoMapperUtils.AutoMap<CommentModel, Data.DataModel.Comment>(model);
+                _myDbContext.Comment.Update(dataMap);
+                int rs = await _myDbContext.SaveChangesAsync();
+                if(rs > 0)
+                {
+                    _logger.LogInformation($"{Message.UpdateSuccess}");
+                    return new ResponseObject<CommentModel>(model, $"{Message.UpdateSuccess}",Code.Success);
+                }
+                _logger.LogError($"{Message.UpdateError}");
+                return new ResponseError(Code.ServerError, $"{Message.UpdateError}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
         }
     }
 }
