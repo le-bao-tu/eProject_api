@@ -1,6 +1,5 @@
 ﻿using Business.Product;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -8,13 +7,16 @@ namespace eProject_Sem4.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1", IgnoreApi = false)]
     public class ProductController : Controller
     {
         private IProductHandler _productHandler;
+        private readonly IEasyCachingProviderFactory _cacheFactory;
 
-        public ProductController(IProductHandler productHandler)
+        public ProductController(IProductHandler productHandler, IEasyCachingProviderFactory factory)
         {
             _productHandler = productHandler;
+            _cacheFactory = factory;
         }
 
         [HttpGet]
@@ -31,7 +33,19 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<ProductCreateModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductById(Guid id)
         {
-            return Ok(await _productHandler.getProductById(id));
+            var cachekey = $"PRODUCTID_{id}";
+            var provider = _cacheFactory.GetCachingProvider("default");
+            var cacheResult = await provider.GetAsync<Response>(cachekey);
+            if (cacheResult != null && cacheResult.HasValue)
+            {
+                return Ok(cacheResult.Value);
+            }
+            var result = await _productHandler.getProductById(id);
+            if (result.Code == Code.Success)
+            {
+                await provider.SetAsync(cachekey, result, TimeSpan.FromMinutes(10));
+            }
+            return Ok(result);
         }
 
         [HttpGet]
@@ -76,5 +90,29 @@ namespace eProject_Sem4.Controllers
             return File(b, "image/jpeg");
         }
 
+        /// <summary>
+        /// lấy sản phẩm theo danh mục
+        /// </summary>
+        /// <param name="cateId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-product-by-cate")]
+        [ProducesResponseType(typeof(ResponseObject<List<ProductCreateModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProductByCate(Guid? cateId)
+        {
+            var cachekey = $"CATEID_{cateId}";
+            var provider = _cacheFactory.GetCachingProvider("default");
+            var cacheResult = await provider.GetAsync<Response>(cachekey);
+            if (cacheResult != null && cacheResult.HasValue)
+            {
+                return Ok(cacheResult.Value);
+            }
+            var result = await _productHandler.GetProductByCate(cateId);
+            if (result.Code == Code.Success)
+            {
+                await provider.SetAsync(cachekey, result, TimeSpan.FromMinutes(10));
+            }
+            return Ok(result);
+        }
     }
 }

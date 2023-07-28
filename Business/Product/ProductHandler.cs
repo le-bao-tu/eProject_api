@@ -299,5 +299,25 @@ namespace Business.Product
                 return new ResponseError(Code.ServerError, $"{ex.Message}");
             }
         }
+
+        public async Task<Response> GetProductByCate(Guid? cateId)
+        {
+            try
+            {
+                if(cateId == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin trường CateId không được để trống!");
+                }
+
+                var dataproduct = await _myDbContext.Product.Where(x => x.CategoryId == cateId).ToListAsync();
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Product, ProductCreateModel>(dataproduct);
+                return new ResponseObject<List<ProductCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
     }
 }
