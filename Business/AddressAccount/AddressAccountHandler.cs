@@ -98,7 +98,7 @@ namespace Business.AddressAccount
         }
 
         public async Task<Response> GetAllAddressAccount(PageModel model)
-        {
+      {
             try
             {
                 var data = await _myDbContext.AddressAccount.ToListAsync();

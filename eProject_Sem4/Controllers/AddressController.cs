@@ -24,10 +24,10 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [Route("getall-address-account")]
         [ProducesResponseType(typeof(ResponseObject<List<AddressAccountModel>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllAddressAccount(PageModel model)
+        public async Task<IActionResult> GetAllAddressAccount([FromQuery] PageModel model)
         {
             return Ok(await _addressAccountHandler.GetAllAddressAccount(model));
         }

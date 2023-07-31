@@ -40,7 +40,7 @@ namespace Business.Product
 
         public bool Status { get; set; } = true;
 
-        /*public string? Description { get; set; }*/
+        public string? Description { get; set; }
 
         public DateTime? CreatedDate { get; set; }
 
@@ -50,7 +50,6 @@ namespace Business.Product
 
         public IFormFile? FileImage { get; set; }
 
-        public string? Description { get; set; }
 
         public Guid? CategoryId { get; set; }
 
