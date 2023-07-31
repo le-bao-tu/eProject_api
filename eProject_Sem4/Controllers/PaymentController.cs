@@ -26,7 +26,7 @@ namespace eProject_Sem4.Controllers
         [HttpGet]
         [Route("getall-payment")]
         [ProducesResponseType(typeof(ResponseObject<List<PaymentModel>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAllPayment(PageModel model)
+        public async Task<IActionResult> GetAllPayment([FromQuery] PageModel model)
         {
             return Ok(await _paymentHandler.GetAllPayment(model));
         }
