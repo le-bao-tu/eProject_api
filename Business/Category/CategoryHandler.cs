@@ -3,6 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
+using System.Security.Claims;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Business.Category
 {
@@ -38,6 +43,7 @@ namespace Business.Category
                     }
                     data = data.Skip(excludeRows).Take(model.PageSize.Value).ToList();
                 }
+
                 var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Category, CategoryCreateModel>(data);
                 return new ResponseObject<List<CategoryCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }

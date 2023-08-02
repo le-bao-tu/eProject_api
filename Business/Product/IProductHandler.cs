@@ -37,6 +37,14 @@ namespace Business.Product
         /// <returns></returns>
         Task<Response> UpdateProduct(ProductCreateModel ProductModel);
 
+        /// <summary>
+        /// cập nhật sản phẩm
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="quantity"></param>
+        /// <returns></returns>
+        Task<Response> UpdateProductQuantity(Guid? productId, int? quantity);
+
 
         /// <summary>
         /// xóa sản phẩm

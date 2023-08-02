@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Channels;
 
 namespace Business.Product
 {
@@ -312,6 +313,51 @@ namespace Business.Product
                 var dataproduct = await _myDbContext.Product.Where(x => x.CategoryId == cateId).ToListAsync();
                 var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Product, ProductCreateModel>(dataproduct);
                 return new ResponseObject<List<ProductCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> UpdateProductQuantity(Guid? productId, int? quantity)
+        {
+            try
+            {
+                if (productId == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin trường productId không được để trống!");
+                }
+                if (quantity == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin trường quantity không được để trống!");
+                }
+
+                var data = await _myDbContext.Product.FirstOrDefaultAsync(x => x.ProductId.Equals(productId));
+
+                if (data == null)
+                {
+                    return new ResponseError(Code.ServerError, "Không tồn tại thông tin sản phẩm!");
+                }
+                else
+                {
+                    int? newQuantity = data.Quantity - quantity;
+
+                    if (newQuantity < 0)
+                    {
+                        return new ResponseError(Code.BadRequest, "Không đủ sản phẩm trong kho! Còn " + quantity + " sản phẩm!");
+                    }
+                    else
+                    {
+                        data.Quantity = newQuantity;
+                    }
+
+                }
+
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Product, ProductCreateModel>(data);
+                return new ResponseObject<ProductCreateModel>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {
