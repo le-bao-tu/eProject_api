@@ -17,6 +17,8 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
 using Business.Comment;
+using Business.Order;
+using Business.OrderDetail;
 
 namespace eProject_Sem4
 {
@@ -176,6 +178,8 @@ namespace eProject_Sem4
             services.AddScoped<IAddressAccountHandler,  AddressAccountHandler>();
             services.AddScoped<IPaymentHandler, PaymentHandler>();
             services.AddScoped<ICommentHandler, CommentHandler>();
+            services.AddScoped<IOrderHandler, OrderHandler>();
+            services.AddScoped<IOrderDetailHandler, OrderDetailHandler>();
 
         }
 
