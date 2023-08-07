@@ -1,24 +1,13 @@
-﻿using Business.Product;
-using Data;
+﻿using Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using Data.DataModel;
-using Business.Category;
-using FluentValidation;
-using Business.OrderDetail;
 
 namespace Business.Order
 {
     public class OrderHandler : IOrderHandler
     {
-
         private readonly MyDB_Context _myDbContext;
         private readonly IConfiguration _config;
         private readonly ILogger<OrderHandler> _logger;
@@ -121,7 +110,7 @@ namespace Business.Order
                         if (rs1 > 0)
                         {
                             var pro = await _myDbContext.Product.FirstOrDefaultAsync(x => x.ProductId == odcm.ProductId);
-                            if(pro != null)
+                            if (pro != null)
                             {
                                 pro.Quantity = pro.Quantity - odcm.Quantity;
                                 _myDbContext.Product.Update(pro);
@@ -212,12 +201,12 @@ namespace Business.Order
 
                 var listOd = await _myDbContext.OrderDetail.Where(x => x.OrderId.Equals(OrderId)).ToListAsync();
 
-                if (listOd != null) 
+                if (listOd != null)
                 {
                     _myDbContext.OrderDetail.RemoveRange(listOd);
                     int rs1 = await _myDbContext.SaveChangesAsync();
 
-                    if(rs1 > 0)
+                    if (rs1 > 0)
                     {
                         _myDbContext.Order.Remove(data);
                         int rs = await _myDbContext.SaveChangesAsync();

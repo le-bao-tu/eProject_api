@@ -3,11 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mail;
-using System.Security.Claims;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Business.Category
 {
@@ -43,7 +38,6 @@ namespace Business.Category
                     }
                     data = data.Skip(excludeRows).Take(model.PageSize.Value).ToList();
                 }
-
                 var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Category, CategoryCreateModel>(data);
                 return new ResponseObject<List<CategoryCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
@@ -144,17 +138,18 @@ namespace Business.Category
                     var errorMessage = result.Errors.Select(x => x.ErrorMessage).ToList();
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
-                if (CategoryModel.FileImage != null)
+                if (CategoryModel.Image != null)
                 {
+                    /// Convert the base64 string back to bytes
+                    byte[] imageBytes = Convert.FromBase64String(CategoryModel.Image);
+
                     // Save the file to a location or process it as needed.
                     // For example, you can save it to the "wwwroot/images" folder:
                     string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-                    string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(CategoryModel.FileImage.FileName);
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_image.png"; 
                     string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await CategoryModel.FileImage.CopyToAsync(fileStream);
-                    }
+
+                    System.IO.File.WriteAllBytes(filePath, imageBytes);
                     CategoryModel.Image = uniqueFileName;
                 }
 
@@ -204,37 +199,38 @@ namespace Business.Category
                 {
                     return new ResponseError(Code.BadRequest, "Danh mục không tồn tại");
                 }
-                else
+
+                data.CategoryId = CategoryModel.CategoryId;
+                data.CategoryName = CategoryModel.CategoryName;
+                data.Status = CategoryModel.Status;
+                data.UpdatedDate = DateTime.Now;
+
+
+                if (CategoryModel.Image != null)
                 {
-                    data.CategoryId = CategoryModel.CategoryId;
-                    data.CategoryName = CategoryModel.CategoryName;
-                    data.Status = CategoryModel.Status;
-                    data.UpdatedDate = DateTime.Now;
+                    /// Convert the base64 string back to bytes
+                    byte[] imageBytes = Convert.FromBase64String(CategoryModel.Image);
 
-                    if (CategoryModel.FileImage != null)
-                    {
-                        // Save the file to a location or process it as needed.
-                        // For example, you can save it to the "wwwroot/images" folder:
-                        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-                        string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(CategoryModel.FileImage.FileName);
-                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await CategoryModel.FileImage.CopyToAsync(fileStream);
-                        }
-                        CategoryModel.Image = uniqueFileName;
-                        data.Image = CategoryModel.Image;
-                    }
+                    // Save the file to a location or process it as needed.
+                    // For example, you can save it to the "wwwroot/images" folder:
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_image.png";
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                    _myDbContext.Category.Update(data);
-                    int rs = await _myDbContext.SaveChangesAsync();
-                    if (rs > 0)
-                    {
-                        return new ResponseObject<CategoryCreateModel>(CategoryModel, $"{Message.UpdateSuccess}", Code.Success);
-                    }
-
-                    return new ResponseError(Code.ServerError, $"{Message.UpdateError}");
+                    System.IO.File.WriteAllBytes(filePath, imageBytes);
+                    data.Image = uniqueFileName;
                 }
+
+
+                _myDbContext.Category.Update(data);
+                int rs = await _myDbContext.SaveChangesAsync();
+                if (rs > 0)
+                {
+                    return new ResponseObject<CategoryCreateModel>(CategoryModel, $"{Message.UpdateSuccess}", Code.Success);
+                }
+
+                return new ResponseError(Code.ServerError, $"{Message.UpdateError}");
+
             }
             catch (Exception ex)
             {

@@ -43,19 +43,8 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<CategoryCreateModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCategoryById(Guid id)
         {
-            var cachekey = $"CATEID_{id}";
-            var provider = _cacheFactory.GetCachingProvider("default");
-            var cacheResult = await provider.GetAsync<Response>(cachekey);
-            if (cacheResult != null && cacheResult.HasValue)
-            {
-                return Ok(cacheResult.Value);
-            }
-            var result = await _categoryHandler.getCategoryById(id);
-            if(result.Code == Code.Success )
-            {
-                await provider.SetAsync(cachekey, result, TimeSpan.FromMinutes(10));
-            }
-            return Ok(result);
+           
+            return Ok(await _categoryHandler.getCategoryById(id));
         }
 
         /// <summary>
@@ -80,7 +69,7 @@ namespace eProject_Sem4.Controllers
         [HttpPost]
         [Route("create-category")]
         [ProducesResponseType(typeof(ResponseObject<CategoryCreateModel>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateCategory(CategoryCreateModel model)
+        public async Task<IActionResult> CreateCategory([FromBody]CategoryCreateModel model)
         {
             return Ok(await _categoryHandler.CreateCategory(model));
         }
