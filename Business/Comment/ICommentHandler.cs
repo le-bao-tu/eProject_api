@@ -17,6 +17,10 @@ namespace Business.Comment
         /// <returns></returns>
         Task<Response> GetAllComment(PageModel model);
 
+        Task<Response> GetCommentById(Guid? commentId);
+
+        Task<Response> GetCommentByProductId(Guid? productId);
+
         /// <summary>
         /// Thêm mới comment
         /// </summary>

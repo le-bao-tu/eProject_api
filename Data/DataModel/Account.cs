@@ -26,7 +26,7 @@ namespace Data.DataModel
         public string? Avatar { get; set; }
 
         [Column("birtday")]
-        public DateTime? Birthday { get; set; }
+        public string? Birthday { get; set; }
 
         [Column("createdDate")]
         public DateTime? CreatedDate { get; set; }

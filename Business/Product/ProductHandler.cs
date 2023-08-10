@@ -32,7 +32,7 @@ namespace Business.Product
         {
             try
             {
-                var data = await _myDbContext.Product.ToListAsync();
+                var data = await _myDbContext.Product.Include(c => c.Category).Where(x => x.Status == true).ToListAsync();
                 if (model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if (model.PageSize <= 0)
@@ -66,7 +66,7 @@ namespace Business.Product
                     return new ResponseError(Code.BadRequest, "Thông tin trường productId không được để trống!");
                 }
 
-                var data = await _myDbContext.Product.FirstOrDefaultAsync(x => x.ProductId.Equals(productId));
+                var data = await _myDbContext.Product.Include(c => c.Category).FirstOrDefaultAsync(x => x.ProductId.Equals(productId));
                 if (data == null)
                 {
                     return new ResponseError(Code.ServerError, "Không tồn tại thông tin sản phẩm!");
@@ -84,25 +84,12 @@ namespace Business.Product
 
         public async Task<Response> searchProduct(PageModel model, string? name, int? quantity, float? priceMin, float? priceMax, string? address, bool status, Guid? categoryId)
         {
-            int bitStatus;
-            if (status == true)
-            {
-                bitStatus = 1;
-            }
-            else
-            {
-                bitStatus = 0;
-            }
             try
             {
-                string sql = "SELECT * FROM products WHERE 1=1";
+                string sql = "SELECT * FROM products WHERE status = 1";
                 if (name != null)
                 {
                     sql += " AND lower(productName) LIKE N'%" + name.ToLower() + "%'";
-                }
-                if (bitStatus >= 0 && bitStatus < 2)
-                {
-                    sql += " AND status = " + bitStatus;
                 }
                 if (quantity != null && quantity >= 0)
                 {
@@ -110,11 +97,11 @@ namespace Business.Product
                 }
                 if (priceMin != null && priceMin >= 0)
                 {
-                    sql += " AND price >= " + priceMin;
+                    sql += " AND salePrice >= " + priceMin;
                 }
                 if (priceMax != null && priceMax >= 0)
                 {
-                    sql += " AND price <= " + priceMax;
+                    sql += " AND salePrice <= " + priceMax;
                 }
                 if (address != null)
                 {
@@ -167,17 +154,18 @@ namespace Business.Product
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
 
-                if (ProductModel.FileImage != null)
+                if (ProductModel.Image != null)
                 {
+                    /// Convert the base64 string back to bytes
+                    byte[] imageBytes = Convert.FromBase64String(ProductModel.Image);
+
                     // Save the file to a location or process it as needed.
                     // For example, you can save it to the "wwwroot/images" folder:
                     string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-                    string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(ProductModel.FileImage.FileName);
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_image.png";
                     string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await ProductModel.FileImage.CopyToAsync(fileStream);
-                    }
+
+                    System.IO.File.WriteAllBytes(filePath, imageBytes);
                     ProductModel.Image = uniqueFileName;
                 }
 
@@ -240,19 +228,19 @@ namespace Business.Product
                     data.CategoryId = ProductModel.CategoryId;
                     data.UpdatedDate = DateTime.Now;
 
-                    if (ProductModel.FileImage != null)
+                    if (ProductModel.Image != null)
                     {
+                        /// Convert the base64 string back to bytes
+                        byte[] imageBytes = Convert.FromBase64String(ProductModel.Image);
+
                         // Save the file to a location or process it as needed.
                         // For example, you can save it to the "wwwroot/images" folder:
                         string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-                        string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(ProductModel.FileImage.FileName);
+                        string uniqueFileName = Guid.NewGuid().ToString() + "_image.png";
                         string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await ProductModel.FileImage.CopyToAsync(fileStream);
-                        }
-                        ProductModel.Image = uniqueFileName;
-                        data.Image = ProductModel.Image;
+
+                        System.IO.File.WriteAllBytes(filePath, imageBytes);
+                        data.Image = uniqueFileName;
                     }
 
                     _myDbContext.Product.Update(data);
@@ -286,7 +274,9 @@ namespace Business.Product
                 {
                     return new ResponseError(Code.BadRequest, "Sản phẩm không tồn tại trong hệ thống!");
                 }
-                _myDbContext.Product.Remove(data);
+                data.Status = false;
+
+                _myDbContext.Product.Update(data);
                 int rs = await _myDbContext.SaveChangesAsync();
                 if (rs > 0)
                 {

@@ -1,12 +1,15 @@
-﻿using Business.Payment;
+﻿using Business.AddressAccount;
+using Business.Payment;
 using Business.User;
 using Data;
+using Data.DataModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,7 +63,7 @@ namespace Business.Comment
         {
             try
             {
-                var data = await _myDbContext.Comment.ToListAsync();
+                var data = await _myDbContext.Comment.Include(x => x.Account).Include(x => x.Product).ToListAsync();
                 if (model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if (model.PageSize <= 0)
@@ -86,6 +89,46 @@ namespace Business.Comment
             }
         }
 
+        public async Task<Response> GetCommentById(Guid? commentId)
+        {
+            try
+            {
+                if (commentId == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin trường commentId không đươc để trống!");
+                }
+
+                var data = await _myDbContext.Comment.Include(x => x.Account).Include(x => x.Product).FirstOrDefaultAsync(x => x.CommentId == commentId);
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Comment, CommentModel>(data);
+                return new ResponseObject<CommentModel>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> GetCommentByProductId(Guid? productId)
+        {
+            try
+            {
+                if (productId == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin trường productId không đươc để trống!");
+                }
+
+                var data = await _myDbContext.Comment.Include(x => x.Account).Include(x => x.Product).Where(x => x.ProductId == productId).ToListAsync();
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Comment, CommentModel>(data);
+                return new ResponseObject<List<CommentModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
         public async Task<Response> InsertComment(CommentModel model)
         {
             try
@@ -98,10 +141,12 @@ namespace Business.Comment
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
 
+                model.CreatedDate = DateTime.Now;
+
                 var dataMap = AutoMapperUtils.AutoMap<CommentModel, Data.DataModel.Comment>(model);
                 _myDbContext.Comment.Add(dataMap);
                 int rs = await _myDbContext.SaveChangesAsync();
-                if(rs > 1)
+                if(rs > 0)
                 {
                     return new ResponseObject<CommentModel>(model, $"{Message.CreateSuccess}",Code.Success);
                 }
@@ -125,6 +170,9 @@ namespace Business.Comment
                     var errorMessage = result.Errors.Select(x => x.ErrorMessage).ToList();
                     return new ResponseError(Code.ServerError, "Dữ liệu không hợp lệ!", errorMessage);
                 }
+
+                model.UpdatedDate = DateTime.Now;
+
                 var dataMap = AutoMapperUtils.AutoMap<CommentModel, Data.DataModel.Comment>(model);
                 _myDbContext.Comment.Update(dataMap);
                 int rs = await _myDbContext.SaveChangesAsync();

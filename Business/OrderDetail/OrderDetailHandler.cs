@@ -65,14 +65,14 @@ namespace Business.OrderDetail
                     return new ResponseError(Code.BadRequest, "Thông tin trường OrderId không được để trống!");
                 }
 
-                var data = await _myDbContext.OrderDetail.FirstOrDefaultAsync(x => x.OrderId.Equals(OrderId));
+                var data = await _myDbContext.OrderDetail.Where(x => x.OrderId.Equals(OrderId)).ToListAsync();
                 if (data == null)
                 {
                     return new ResponseError(Code.ServerError, "Không tồn tại thông tin đơn hàng!");
                 }
 
                 var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.OrderDetail, OrderDetailCreateModel>(data);
-                return new ResponseObject<OrderDetailCreateModel>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+                return new ResponseObject<List<OrderDetailCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {

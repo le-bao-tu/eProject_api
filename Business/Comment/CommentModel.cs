@@ -24,9 +24,13 @@ namespace Business.Comment
         /// </summary>
         public Guid? AccountId { get; set; }
 
+        public virtual Data.DataModel.Account? Account { get; set; }
+
         /// <summary>
         /// khóa ngoại tham chiếu đến bảng product
         /// </summary>
         public Guid? ProductId { get; set; }
+
+        public virtual Data.DataModel.Product? Product { get; set; }
     }
 }

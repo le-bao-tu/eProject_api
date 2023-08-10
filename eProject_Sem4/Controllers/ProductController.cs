@@ -33,19 +33,7 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<ProductCreateModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductById(Guid id)
         {
-            var cachekey = $"PRODUCTID_{id}";
-            var provider = _cacheFactory.GetCachingProvider("default");
-            var cacheResult = await provider.GetAsync<Response>(cachekey);
-            if (cacheResult != null && cacheResult.HasValue)
-            {
-                return Ok(cacheResult.Value);
-            }
-            var result = await _productHandler.getProductById(id);
-            if (result.Code == Code.Success)
-            {
-                await provider.SetAsync(cachekey, result, TimeSpan.FromMinutes(10));
-            }
-            return Ok(result);
+            return Ok(await _productHandler.getProductById(id));
         }
 
         [HttpGet]
