@@ -81,19 +81,7 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<AddressAccountModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAddressById(Guid? addressId)
         {
-            var cachekey = $"ADDRESSID_{addressId}";
-            var provider = _cacheFactory.GetCachingProvider("default");
-            var cacheResult = await provider.GetAsync<Response>(cachekey);
-            if(cacheResult != null && cacheResult.HasValue)
-            {
-                return Ok(cacheResult.Value);
-            }
-            var result = await _addressAccountHandler.GetAddressAccountById(addressId);
-            if(result.Code == Code.Success)
-            {
-                await provider.SetAsync(cachekey, result, TimeSpan.FromHours(10));
-            }
-            return Ok(result);
+            return Ok(await _addressAccountHandler.GetAddressAccountById(addressId));
         }
 
         /// <summary>

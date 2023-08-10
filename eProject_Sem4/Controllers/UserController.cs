@@ -165,5 +165,22 @@ namespace eProject_Sem4.Controllers
         {
             return Ok(await _userHandler.DeleteUser(userId));
         }
+
+        [HttpGet]
+        [Route("get-user-by-id")]
+        [ProducesResponseType(typeof(ResponseObject<string>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserById(Guid? userId)
+        {
+            return Ok(await _userHandler.GetUserById(userId));
+        }
+
+        [HttpGet]
+        [Route("get-user-image")]
+        [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]
+        public IActionResult GetImage(string image)
+        {
+            Byte[] b = System.IO.File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\images\\" + image);
+            return File(b, "image/jpeg");
+        }
     }
 }

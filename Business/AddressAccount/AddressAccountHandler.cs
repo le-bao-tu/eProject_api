@@ -61,7 +61,7 @@ namespace Business.AddressAccount
                     return new ResponseError(Code.BadRequest, "Thông tin trường addressId không được để trống");
                 }
 
-                var data = await _myDbContext.AddressAccount.FirstOrDefaultAsync(x => x.AddressId == addressId);
+                var data = await _myDbContext.AddressAccount.Include(x => x.Account).FirstOrDefaultAsync(x => x.AddressId == addressId);
                 if (data == null)
                 {
                     return new ResponseError(Code.ServerError, "Dữ liệu trống!");
@@ -86,7 +86,7 @@ namespace Business.AddressAccount
                     return new ResponseError(Code.BadRequest, "Thông tin trường accountId không đươc để trống!");
                 }
 
-                var data = await _myDbContext.AddressAccount.Where(x => x.AccountId == accountId).ToListAsync();
+                var data = await _myDbContext.AddressAccount.Include(x => x.Account).Where(x => x.AccountId == accountId).ToListAsync();
                 var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.AddressAccount, AddressAccountModel>(data);
                 return new ResponseObject<List<AddressAccountModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
@@ -101,7 +101,7 @@ namespace Business.AddressAccount
       {
             try
             {
-                var data = await _myDbContext.AddressAccount.ToListAsync();
+                var data = await _myDbContext.AddressAccount.Include(x => x.Account).ToListAsync();
                 if (model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if (model.PageSize <= 0)

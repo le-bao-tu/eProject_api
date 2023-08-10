@@ -51,7 +51,7 @@ namespace eProject_Sem4.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("uppdate-comment")]
+        [Route("update-comment")]
         [ProducesResponseType(typeof(ResponseObject<CommentModel>), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateComment([FromBody]CommentModel model)
         {
@@ -69,6 +69,23 @@ namespace eProject_Sem4.Controllers
         public async Task<IActionResult> DeleteComment(Guid? commentId)
         {
             return Ok(await _commentHandler.DeleteComment(commentId));
+        }
+
+
+        [HttpGet]
+        [Route("get-comment-by-id")]
+        [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCommentById(Guid? commentId)
+        {
+            return Ok(await _commentHandler.GetCommentById(commentId));
+        }
+
+        [HttpGet]
+        [Route("get-comment-by-productId")]
+        [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCommentByProductId(Guid? productId)
+        {
+            return Ok(await _commentHandler.GetCommentByProductId(productId));
         }
     }
 }

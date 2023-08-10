@@ -22,5 +22,7 @@ namespace Business.Payment
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
+
+        public Guid? OrderId { get; set; }
     }
 }

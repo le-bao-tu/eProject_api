@@ -12,6 +12,7 @@ using Data.DataModel;
 using Business.User;
 using FluentValidation;
 using System.Text.RegularExpressions;
+using Business.Category;
 
 namespace Business.Account
 {
@@ -111,7 +112,10 @@ namespace Business.Account
                 {
                     return new ResponseError(Code.BadRequest, "Tài khoản không tồn tại trong hệ thống!");
                 }
-                _myDbContext.Account.Remove(data);
+
+                data.Sate = false;
+
+                _myDbContext.Account.Update(data);
                 int rs = await _myDbContext.SaveChangesAsync();
                 if (rs > 0)
                 {
@@ -254,7 +258,7 @@ namespace Business.Account
         {
             try
             {
-                var data = await _myDbContext.Account.ToListAsync();
+                var data = await _myDbContext.Account.Where(x => x.Sate == true).ToListAsync();
                 if(model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if(model.PageSize <= 0)
@@ -412,6 +416,21 @@ namespace Business.Account
                     return new ResponseError(Code.BadRequest, "Phone đã tồn tại trong hệ thống");
                 }
 
+                if (model.Avatar != null)
+                {
+                    /// Convert the base64 string back to bytes
+                    byte[] imageBytes = Convert.FromBase64String(model.Avatar);
+
+                    // Save the file to a location or process it as needed.
+                    // For example, you can save it to the "wwwroot/images" folder:
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_image.png";
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    System.IO.File.WriteAllBytes(filePath, imageBytes);
+                    model.Avatar = uniqueFileName;
+                }
+
                 model.Password = Utils.EncryptSha256(model.Password);
                 model.CreatedDate = DateTime.Now;
                 model.TimeLock = DateTime.Now;
@@ -475,6 +494,21 @@ namespace Business.Account
                     data.CountError = model.CountError;
                     data.TimeLock = model.TimeLock;
                     data.IsLock = model.IsLock;
+
+                    if (model.Avatar != null)
+                    {
+                        /// Convert the base64 string back to bytes
+                        byte[] imageBytes = Convert.FromBase64String(model.Avatar);
+
+                        // Save the file to a location or process it as needed.
+                        // For example, you can save it to the "wwwroot/images" folder:
+                        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                        string uniqueFileName = Guid.NewGuid().ToString() + "_image.png";
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        System.IO.File.WriteAllBytes(filePath, imageBytes);
+                        data.Avatar = uniqueFileName;
+                    }
 
                     _myDbContext.Account.Update(data);
                     int rs = await _myDbContext.SaveChangesAsync();

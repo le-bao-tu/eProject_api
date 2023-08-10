@@ -23,5 +23,7 @@ namespace Business.AddressAccount
         /// khóa ngoại tham chiếu đến bảng Account
         /// </summary>
         public Guid? AccountId { get; set; }
+
+        public virtual Data.DataModel.Account? Account { get; set; }
     }
 }

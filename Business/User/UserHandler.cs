@@ -1,5 +1,6 @@
 ﻿using Data;
 using Data.DataModel;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -50,6 +51,21 @@ namespace Business.User
                 if (checkData != null)
                 {
                     return new ResponseError(Code.BadRequest, "Thông tin đã tồn tại trong hệ thống");
+                }
+
+                if (userModel.Avatar != null)
+                {
+                    /// Convert the base64 string back to bytes
+                    byte[] imageBytes = Convert.FromBase64String(userModel.Avatar);
+
+                    // Save the file to a location or process it as needed.
+                    // For example, you can save it to the "wwwroot/images" folder:
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_image.png";
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    System.IO.File.WriteAllBytes(filePath, imageBytes);
+                    userModel.Avatar = uniqueFileName;
                 }
 
                 userModel.Password = Utils.EncryptSha256(userModel.Password);
@@ -384,6 +400,21 @@ namespace Business.User
                     data.IsLock = userModel.IsLock;
                     data.RoleId = userModel.RoleId;
 
+                    if (userModel.Avatar != null)
+                    {
+                        /// Convert the base64 string back to bytes
+                        byte[] imageBytes = Convert.FromBase64String(userModel.Avatar);
+
+                        // Save the file to a location or process it as needed.
+                        // For example, you can save it to the "wwwroot/images" folder:
+                        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                        string uniqueFileName = Guid.NewGuid().ToString() + "_image.png";
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        System.IO.File.WriteAllBytes(filePath, imageBytes);
+                        data.Avatar = uniqueFileName;
+                    }
+
                     _myDbContext.User.Update(data);
                     int rs = await _myDbContext.SaveChangesAsync();
                     if (rs > 0)
@@ -468,8 +499,9 @@ namespace Business.User
                 {
                     return new ResponseError(Code.ServerError, "Tài khoản không tồn tại trong hệ thống");
                 }
+                data.Sate = false;
 
-                _myDbContext.User.Remove(data);
+                _myDbContext.User.Update(data);
                 int rs = await _myDbContext.SaveChangesAsync();
                 if(rs > 0)
                 {
@@ -488,10 +520,31 @@ namespace Business.User
         {
             try
             {
-                var data = await _myDbContext.User.ToListAsync();
+                var data = await _myDbContext.User.Where(x => x.Sate == true).ToListAsync();
 
                 var dataMap = AutoMapperUtils.AutoMap<Users, UserCreateModel>(data);
                 return new ResponseObject<List<UserCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> GetUserById(Guid? userId)
+        {
+            try
+            {
+                var data = await _myDbContext.User.FirstOrDefaultAsync(x => x.Id.Equals(userId));
+
+                if(data == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Admin không tồn tại");
+                }
+
+                var dataMap = AutoMapperUtils.AutoMap<Users, UserCreateModel>(data);
+                return new ResponseObject<UserCreateModel>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {

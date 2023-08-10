@@ -17,6 +17,10 @@ namespace Business.Order
         /// <returns></returns>
         Task<Response> getAllOrder(PageModel model);
 
+        Task<Response> getOrderByAccountId(Guid? accountId);
+
+        Task<Response> getFinishedOrderByAccountId(Guid? accountId);
+
         /// <summary>
         /// Lấy Order theo Id
         /// </summary>

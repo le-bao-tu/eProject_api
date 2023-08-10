@@ -23,7 +23,7 @@ namespace Business.Category
         {
             try
             {
-                var data = await _myDbContext.Category.ToListAsync();
+                var data = await _myDbContext.Category.Where(x => x.Status == true).ToListAsync();
                 if (model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if (model.PageSize <= 0)
@@ -253,7 +253,10 @@ namespace Business.Category
                 {
                     return new ResponseError(Code.BadRequest, "Danh mục không tồn tại trong hệ thống!");
                 }
-                _myDbContext.Category.Remove(data);
+
+                data.Status = false;
+
+                _myDbContext.Category.Update(data);
                 int rs = await _myDbContext.SaveChangesAsync();
                 if (rs > 0)
                 {

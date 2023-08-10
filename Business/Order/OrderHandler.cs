@@ -23,7 +23,7 @@ namespace Business.Order
         {
             try
             {
-                var data = await _myDbContext.Order.ToListAsync();
+                var data = await _myDbContext.Order.Include(x => x.Account).ToListAsync();
                 if (model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if (model.PageSize <= 0)
@@ -57,7 +57,7 @@ namespace Business.Order
                     return new ResponseError(Code.BadRequest, "Thông tin trường OrderId không được để trống!");
                 }
 
-                var data = await _myDbContext.Order.FirstOrDefaultAsync(x => x.OrderId.Equals(OrderId));
+                var data = await _myDbContext.Order.Include(x => x.Account).FirstOrDefaultAsync(x => x.OrderId.Equals(OrderId));
                 if (data == null)
                 {
                     return new ResponseError(Code.ServerError, "Không tồn tại thông tin đơn hàng!");
@@ -252,6 +252,59 @@ namespace Business.Order
 
                     return new ResponseError(Code.ServerError, $"{Message.UpdateError}");
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> getOrderByAccountId(Guid? accountId)
+        {
+            try
+            {
+                if (accountId == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin trường accountId không được để trống!");
+                }
+
+                var data = await _myDbContext.Order.Where(x => x.AccountId.Equals(accountId)).ToListAsync();
+                if (data == null)
+                {
+                    return new ResponseError(Code.ServerError, "Không tồn tại thông tin đơn hàng!");
+                }
+
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Order, OrderCreateModel>(data);
+                return new ResponseObject<List<OrderCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> getFinishedOrderByAccountId(Guid? accountId)
+        {
+            try
+            {
+                if (accountId == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin trường accountId không được để trống!");
+                }
+
+                // item.state  == 1 ? 'Đặt hàng thành công' :
+                // item.state  == 2 ? 'Đang giao hàng' :
+                // item.state  == 3 ? 'Giao hàng thành công' : 'Đã hủy'
+                var data = await _myDbContext.Order.Where(x => x.AccountId.Equals(accountId) && x.State == 3).ToListAsync();
+                if (data == null)
+                {
+                    return new ResponseError(Code.ServerError, "Không tồn tại thông tin đơn hàng!");
+                }
+
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Order, OrderCreateModel>(data);
+                return new ResponseObject<List<OrderCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {

@@ -106,19 +106,7 @@ namespace eProject_Sem4.Controllers
         [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAccountById(Guid? accountId)
         {
-            var cahekey = $"ACCOUNT_{accountId}";
-            var provider = _cacheFactory.GetCachingProvider("default");
-            var cacheResult = await provider.GetAsync<Response>(cahekey);
-            if (cacheResult != null && cacheResult.HasValue)
-            {
-                return Ok(cacheResult.Value);
-            }
-            var result = await _accountHandler.GetAccountById(accountId);
-            if (result.Code == Code.Success)
-            {
-                await provider.SetAsync(cahekey, result, TimeSpan.FromMinutes(10));
-            }
-            return Ok(result);
+            return Ok(await _accountHandler.GetAccountById(accountId));
         }
 
         /// <summary>
@@ -184,6 +172,15 @@ namespace eProject_Sem4.Controllers
         public async Task<IActionResult> ChangePassword(Guid? userId, string password)
         {
             return Ok(await _accountHandler.ChangePassword(userId, password));
+        }
+
+        [HttpGet]
+        [Route("get-account-image")]
+        [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]
+        public IActionResult GetImage(string image)
+        {
+            Byte[] b = System.IO.File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\images\\" + image);
+            return File(b, "image/jpeg");
         }
     }
 }
