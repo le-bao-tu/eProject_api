@@ -16,6 +16,14 @@ namespace Business.Payment
         /// <returns></returns>
         Task<Response> GetAllPayment(PageModel model);
 
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        Task<Response> SortBy(string sort);
+
         /// <summary>
         /// thêm mới loại hình thanh toán 
         /// </summary>

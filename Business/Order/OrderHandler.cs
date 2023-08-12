@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using Business.AddressAccount;
+using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -303,6 +304,31 @@ namespace Business.Order
                     return new ResponseError(Code.ServerError, "Không tồn tại thông tin đơn hàng!");
                 }
 
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Order, OrderCreateModel>(data);
+                return new ResponseObject<List<OrderCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> SortBy(string sort)
+        {
+            try
+            {
+                var data = await _myDbContext.Order.ToListAsync();
+                data = sort switch
+                {
+                    var t when t.Equals("orderid_asc") => data.OrderBy(x => x.OrderId).ToList(),
+                    var t when t.Equals("orderid_desc") => data.OrderByDescending(x => x.OrderId).ToList(),
+                    var t when t.Equals("total_asc") => data.OrderBy(x => x.TotalPrice).ToList(),
+                    var t when t.Equals("total_desc") => data.OrderByDescending(x => x.TotalPrice).ToList(),
+                    _ => data
+                };
+
+                _logger.LogInformation($"{Message.GetDataSuccess}");
                 var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Order, OrderCreateModel>(data);
                 return new ResponseObject<List<OrderCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }

@@ -32,7 +32,7 @@ namespace Business.Product
         {
             try
             {
-                var data = await _myDbContext.Product.Include(c => c.Category).Where(x => x.Status == true).ToListAsync();
+                var data = await _myDbContext.Product.Include(c => c.Category).ToListAsync();
                 if (model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if (model.PageSize <= 0)
@@ -348,6 +348,31 @@ namespace Business.Product
 
                 var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Product, ProductCreateModel>(data);
                 return new ResponseObject<ProductCreateModel>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> SortBy(string sort)
+        {
+            try
+            {
+                var data = await _myDbContext.Product.ToListAsync();
+                data = sort switch
+                {
+                    var t when t.Equals("productid_asc") => data.OrderBy(x => x.ProductId).ToList(),
+                    var t when t.Equals("productid_desc") => data.OrderByDescending(x => x.ProductId).ToList(),
+                    var t when t.Equals("productname_asc") => data.OrderBy(x => x.ProductName).ToList(),
+                    var t when t.Equals("productname_desc") => data.OrderByDescending(x => x.ProductName).ToList(),
+                    _ => data
+                };
+
+                _logger.LogInformation($"{Message.GetDataSuccess}");
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Product, ProductCreateModel>(data);
+                return new ResponseObject<List<ProductCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {

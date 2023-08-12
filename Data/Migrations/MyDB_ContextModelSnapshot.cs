@@ -37,8 +37,8 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("avatar");
 
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("datetime2")
+                    b.Property<string>("Birthday")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("birtday");
 
                     b.Property<int>("CountError")
@@ -113,7 +113,6 @@ namespace Data.Migrations
                         .HasColumnName("createdDate");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("image");
 
@@ -136,7 +135,6 @@ namespace Data.Migrations
                         .HasColumnName("category_id");
 
                     b.Property<string>("CategoryName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("categoryName");
 
@@ -145,7 +143,6 @@ namespace Data.Migrations
                         .HasColumnName("createdDate");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("image");
 
@@ -307,10 +304,6 @@ namespace Data.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("createdDate");
 
-                    b.Property<DateTime?>("DateTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("date_time");
-
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("image");
@@ -427,8 +420,8 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("avatar");
 
-                    b.Property<DateTime?>("Birthday")
-                        .HasColumnType("datetime2")
+                    b.Property<string>("Birthday")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("birtday");
 
                     b.Property<int>("CountError")

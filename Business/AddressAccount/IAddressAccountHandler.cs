@@ -16,6 +16,14 @@ namespace Business.AddressAccount
         /// <returns></returns>
         Task<Response> GetAllAddressAccount(PageModel model);
 
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        Task<Response> SortBy(string sort);
+
         /// <summary>
         /// thêm mới địa chỉ người dùng 
         /// </summary>

@@ -1,4 +1,5 @@
 ﻿using Business.AddressAccount;
+using Business.Category;
 using Data;
 using Data.DataModel;
 using Microsoft.EntityFrameworkCore;
@@ -124,6 +125,31 @@ namespace Business.Payment
                     return new ResponseObject<PaymentModel>(model, $"{Message.CreateSuccess}", Code.Success);
                 }
                 return new ResponseError(Code.ServerError, $"{Message.CreateError}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> SortBy(string sort)
+        {
+            try
+            {
+                var data = await _myDbContext.Payments.ToListAsync();
+                data = sort switch
+                {
+                    var t when t.Equals("paymentid_asc") => data.OrderBy(x => x.PaymentId).ToList(),
+                    var t when t.Equals("paymentid_desc") => data.OrderByDescending(x => x.PaymentId).ToList(),
+                    var t when t.Equals("create_asc") => data.OrderBy(x => x.CreatedDate).ToList(),
+                    var t when t.Equals("create_desc") => data.OrderByDescending(x => x.CreatedDate).ToList(),
+                    _ => data
+                };
+
+                _logger.LogInformation($"{Message.GetDataSuccess}");
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Payments, PaymentModel>(data);
+                return new ResponseObject<List<PaymentModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {

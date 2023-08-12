@@ -1,4 +1,5 @@
-﻿using Business.Comment;
+﻿using Business.Category;
+using Business.Comment;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
@@ -30,6 +31,18 @@ namespace eProject_Sem4.Controllers
             return Ok(await _commentHandler.GetAllComment(mode));
         }
 
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("sortby-comment")]
+        [ProducesResponseType(typeof(ResponseObject<List<CommentModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SortByComment([FromQuery] string sort)
+        {
+            return Ok(await _commentHandler.SortBy(sort));
+        }
 
         /// <summary>
         /// thêm mới comment
