@@ -1,5 +1,6 @@
 ﻿using Business.Category;
 using EasyCaching.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -25,12 +26,27 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("getall-category")]
         [ProducesResponseType(typeof(ResponseObject<List<CategoryCreateModel>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllCategory([FromQuery] PageModel model)
         {
             return Ok(await _categoryHandler.getAllCategory(model));
+        }
+
+        
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("sortby-category")]
+        [ProducesResponseType(typeof(ResponseObject<List<CategoryCreateModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SortByCategory([FromQuery] string sort)
+        {
+            return Ok(await _categoryHandler.SortBy(sort));
         }
 
         /// <summary>

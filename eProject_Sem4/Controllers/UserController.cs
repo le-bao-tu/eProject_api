@@ -1,4 +1,5 @@
-﻿using Business.User;
+﻿using Business.Product;
+using Business.User;
 using EasyCaching.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -58,6 +59,19 @@ namespace eProject_Sem4.Controllers
         public async Task<IActionResult> GetAllUser()
         {
             return Ok(await _userHandler.GetAllUser());
+        }
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("sortby-user")]
+        [ProducesResponseType(typeof(ResponseObject<List<ProductCreateModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SortByUser([FromQuery] string sort)
+        {
+            return Ok(await _userHandler.SortBy(sort));
         }
 
         /// <summary>

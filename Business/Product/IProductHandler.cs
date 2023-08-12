@@ -10,6 +10,15 @@ namespace Business.Product
         /// <returns></returns>
         Task<Response> getAllProduct(PageModel model);
 
+
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        Task<Response> SortBy(string sort);
+
         /// <summary>
         /// Lấy Product theo Id
         /// </summary>

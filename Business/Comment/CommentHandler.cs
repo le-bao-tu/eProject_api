@@ -1,4 +1,5 @@
 ﻿using Business.AddressAccount;
+using Business.Category;
 using Business.Payment;
 using Business.User;
 using Data;
@@ -151,6 +152,31 @@ namespace Business.Comment
                     return new ResponseObject<CommentModel>(model, $"{Message.CreateSuccess}",Code.Success);
                 }
                 return new ResponseError(Code.ServerError, $"{Message.CreateError}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> SortBy(string sort)
+        {
+            try
+            {
+                var data = await _myDbContext.Comment.ToListAsync();
+                data = sort switch
+                {
+                    var t when t.Equals("question_asc") => data.OrderBy(x => x.Question).ToList(),
+                    var t when t.Equals("question_desc") => data.OrderByDescending(x => x.Question).ToList(),
+                    var t when t.Equals("create_asc") => data.OrderBy(x => x.CreatedDate).ToList(),
+                    var t when t.Equals("create_desc") => data.OrderByDescending(x => x.CreatedDate).ToList(),
+                    _ => data
+                };
+
+                _logger.LogInformation($"{Message.GetDataSuccess}");
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Comment, CommentModel>(data);
+                return new ResponseObject<List<CommentModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {

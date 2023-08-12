@@ -17,8 +17,25 @@ namespace Business.Comment
         /// <returns></returns>
         Task<Response> GetAllComment(PageModel model);
 
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        Task<Response> SortBy(string sort);
+
+        /// <summary>
+        /// lấy comment theo id
+        /// </summary>
+        /// <param name="commentId"></param>
+        /// <returns></returns>
         Task<Response> GetCommentById(Guid? commentId);
 
+        /// <summary>
+        /// lấy comment theo productId
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
         Task<Response> GetCommentByProductId(Guid? productId);
 
         /// <summary>

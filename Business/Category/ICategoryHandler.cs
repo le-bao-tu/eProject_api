@@ -13,6 +13,13 @@ namespace Business.Category
         Task<Response> getAllCategory(PageModel model);
 
         /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        Task<Response> SortBy(string sort);
+
+        /// <summary>
         /// Lấy Category theo Id
         /// </summary>
         /// <param name="categoryId"></param>

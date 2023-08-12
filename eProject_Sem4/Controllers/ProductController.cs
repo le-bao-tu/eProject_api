@@ -1,4 +1,5 @@
-﻿using Business.Product;
+﻿using Business.Order;
+using Business.Product;
 using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
@@ -27,6 +28,20 @@ namespace eProject_Sem4.Controllers
         {
             return Ok(await _productHandler.getAllProduct(model));
         }
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("sortby-product")]
+        [ProducesResponseType(typeof(ResponseObject<List<ProductCreateModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SortByProduct([FromQuery] string sort)
+        {
+            return Ok(await _productHandler.SortBy(sort));
+        }
+
 
         [HttpGet]
         [Route("get-product-by-id")]

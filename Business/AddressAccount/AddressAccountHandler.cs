@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using Business.Category;
+using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -146,6 +147,31 @@ namespace Business.AddressAccount
                 }
 
                 return new ResponseError(Code.ServerError, $"{Message.IntegratedError}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> SortBy(string sort)
+        {
+            try
+            {
+                var data = await _myDbContext.AddressAccount.ToListAsync();
+                data = sort switch
+                {
+                    var t when t.Equals("addressid_asc") => data.OrderBy(x => x.AddressId).ToList(),
+                    var t when t.Equals("addressid_desc") => data.OrderByDescending(x => x.AddressId).ToList(),
+                    var t when t.Equals("address_asc") => data.OrderBy(x => x.Address).ToList(),
+                    var t when t.Equals("address_desc") => data.OrderByDescending(x => x.Address).ToList(),
+                    _ => data
+                };
+
+                _logger.LogInformation($"{Message.GetDataSuccess}");
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.AddressAccount, AddressAccountModel>(data);
+                return new ResponseObject<List<AddressAccountModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {

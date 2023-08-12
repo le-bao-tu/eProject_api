@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using Business.Category;
+using Data;
 using Data.DataModel;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
@@ -545,6 +546,31 @@ namespace Business.User
 
                 var dataMap = AutoMapperUtils.AutoMap<Users, UserCreateModel>(data);
                 return new ResponseObject<UserCreateModel>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> SortBy(string sort)
+        {
+            try
+            {
+                var data = await _myDbContext.User.ToListAsync();
+                data = sort switch
+                {
+                    var t when t.Equals("userid_asc") => data.OrderBy(x => x.Id).ToList(),
+                    var t when t.Equals("userid_desc") => data.OrderByDescending(x => x.Id).ToList(),
+                    var t when t.Equals("username_asc") => data.OrderBy(x => x.UserName).ToList(),
+                    var t when t.Equals("username_desc") => data.OrderByDescending(x => x.UserName).ToList(),
+                    _ => data
+                };
+
+                _logger.LogInformation($"{Message.GetDataSuccess}");
+                var dataMap = AutoMapperUtils.AutoMap<Users, UserCreateModel>(data);
+                return new ResponseObject<List<UserCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
 ﻿using Business.Account;
+using Business.Category;
 using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
@@ -30,6 +31,19 @@ namespace eProject_Sem4.Controllers
         public async Task<IActionResult> GetAllAccount([FromQuery] PageModel model)
         {
             return Ok(await _accountHandler.GetAllAccount(model));
+        }
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("sortby-account")]
+        [ProducesResponseType(typeof(ResponseObject<List<AccountCreateModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SortByAccount([FromQuery] string sort)
+        {
+            return Ok(await _accountHandler.SortBy(sort));
         }
 
         /// <summary>

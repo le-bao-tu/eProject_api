@@ -1,4 +1,5 @@
 ﻿using Business.Account;
+using Business.Order;
 using Business.Payment;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,20 @@ namespace eProject_Sem4.Controllers
         {
             return Ok(await _paymentHandler.GetAllPayment(model));
         }
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("sortby-payment")]
+        [ProducesResponseType(typeof(ResponseObject<List<PaymentModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SortByPayment([FromQuery] string sort)
+        {
+            return Ok(await _paymentHandler.SortBy(sort));
+        }
+
 
         /// <summary>
         /// thêm mới loại hình thanh toán 

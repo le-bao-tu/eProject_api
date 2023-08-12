@@ -11,6 +11,14 @@ namespace Business.Account
         /// <returns></returns>
         Task<Response> GetAllAccount(PageModel model);
 
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        Task<Response> SortBy(string sort);
+
         /// <summary>
         /// đăng ký tài khoản người dùng
         /// </summary>

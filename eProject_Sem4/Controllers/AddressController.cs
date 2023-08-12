@@ -1,4 +1,5 @@
-﻿using Business.AddressAccount;
+﻿using Business.Account;
+using Business.AddressAccount;
 using EasyCaching.Core;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
@@ -30,6 +31,19 @@ namespace eProject_Sem4.Controllers
         public async Task<IActionResult> GetAllAddressAccount([FromQuery] PageModel model)
         {
             return Ok(await _addressAccountHandler.GetAllAddressAccount(model));
+        }
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("sortby-address")]
+        [ProducesResponseType(typeof(ResponseObject<List<AddressAccountModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SortByAddress([FromQuery] string sort)
+        {
+            return Ok(await _addressAccountHandler.SortBy(sort));
         }
 
         /// <summary>

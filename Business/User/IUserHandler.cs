@@ -19,6 +19,14 @@ namespace Business.User
         Task<Response> GetAllUser();
 
         /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        Task<Response> SortBy(string sort);
+
+
+        /// <summary>
         /// thêm mới tài khoản 
         /// </summary>
         /// <param name="userModel"></param>

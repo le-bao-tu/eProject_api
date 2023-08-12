@@ -23,7 +23,7 @@ namespace Business.Category
         {
             try
             {
-                var data = await _myDbContext.Category.Where(x => x.Status == true).ToListAsync();
+                var data = await _myDbContext.Category.ToListAsync();
                 if (model.PageSize.HasValue && model.PageNumber.HasValue)
                 {
                     if (model.PageSize <= 0)
@@ -221,7 +221,6 @@ namespace Business.Category
                     data.Image = uniqueFileName;
                 }
 
-
                 _myDbContext.Category.Update(data);
                 int rs = await _myDbContext.SaveChangesAsync();
                 if (rs > 0)
@@ -265,6 +264,31 @@ namespace Business.Category
                 return new ResponseError(Code.ServerError, "Xóa danh mục thất bại");
             }
             catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> SortBy(string sort)
+        {
+            try
+            {
+                var data = await _myDbContext.Category.ToListAsync();
+                data = sort switch
+                {
+                    var t when t.Equals("sortid_asc") =>  data.OrderBy(x => x.CategoryId).ToList(),
+                    var t when t.Equals("sortid_desc") => data.OrderByDescending(x => x.CategoryId).ToList(),
+                    var t when t.Equals("sortname_asc") => data.OrderBy(x => x.CategoryName).ToList(),
+                    var t when t.Equals("sortname_desc") => data.OrderByDescending(x => x.CategoryName).ToList(),
+                    _ => data
+                };
+
+                _logger.LogInformation($"{Message.GetDataSuccess}");
+                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Category, CategoryCreateModel>(data);
+                return new ResponseObject<List<CategoryCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex) 
             {
                 _logger.LogError(ex.Message + Message.ErrorLogMessage);
                 return new ResponseError(Code.ServerError, $"{ex.Message}");

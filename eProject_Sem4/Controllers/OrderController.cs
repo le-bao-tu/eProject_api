@@ -1,4 +1,5 @@
-﻿using Business.Order;
+﻿using Business.Account;
+using Business.Order;
 using Business.OrderDetail;
 using Business.Product;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,20 @@ namespace eProject_Sem4.Controllers
         {
             return Ok(await _orderHandler.getAllOrder(model));
         }
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("sortby-order")]
+        [ProducesResponseType(typeof(ResponseObject<List<OrderCreateModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SortByOrder([FromQuery] string sort)
+        {
+            return Ok(await _orderHandler.SortBy(sort));
+        }
+
 
         [HttpGet]
         [Route("get-order-by-id")]

@@ -17,6 +17,14 @@ namespace Business.Order
         /// <returns></returns>
         Task<Response> getAllOrder(PageModel model);
 
+
+        /// <summary>
+        /// sắp xếp 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        Task<Response> SortBy(string sort);
+
         Task<Response> getOrderByAccountId(Guid? accountId);
 
         Task<Response> getFinishedOrderByAccountId(Guid? accountId);
