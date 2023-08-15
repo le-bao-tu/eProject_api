@@ -159,7 +159,7 @@ namespace Business.AddressAccount
         {
             try
             {
-                var data = await _myDbContext.AddressAccount.ToListAsync();
+                var data = await _myDbContext.AddressAccount.Include(x => x.Account).ToListAsync();
                 data = sort switch
                 {
                     var t when t.Equals("addressid_asc") => data.OrderBy(x => x.AddressId).ToList(),

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared;
+using System.Net.Mail;
+using System.Text;
 
 namespace Business.Order
 {
@@ -122,6 +124,26 @@ namespace Business.Order
                         }
                     }
 
+
+                    // thực hiện gửi mail khi đặt hàng thành công 
+                    string to = OrderModel.Email; //To address
+                    string from = "lebaotu05122002@gmail.com"; //From address
+                    var ms = to;
+                    MailMessage message = new MailMessage(from, to);
+                    message.IsBodyHtml = true;
+                    message.Subject = "LEBAOTU - COMPANY";
+                    message.Body = bodyEmail(ms);
+                    message.BodyEncoding = Encoding.UTF8;
+                    message.IsBodyHtml = true;
+                    SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp
+                    System.Net.NetworkCredential basicCredential1 = new
+                    System.Net.NetworkCredential(from, "ptezfclvjexuwbrk");
+                    client.EnableSsl = true;
+                    client.UseDefaultCredentials = false;
+                    client.Credentials = basicCredential1;
+
+                    client.Send(message);
+
                     _logger.LogInformation("Thêm mới đơn hàng thành công", OrderModel);
                     return new ResponseObject<OrderCreateModel>(OrderModel, "Thêm mới đơn hàng thành công", Code.Success);
                 }
@@ -136,6 +158,26 @@ namespace Business.Order
                 _logger.LogError(ex.Message + Message.ErrorLogMessage);
                 return new ResponseError(Code.ServerError, $"{Message.CreateError} - {ex.Message}");
             }
+        }
+
+
+        public string bodyEmail(string email)
+        {
+            string strBody = string.Empty;
+            strBody += "<html><head> </head>";
+            strBody += "<body  style='width: 500px; border: solid 2px #888; padding: 20px; margin: auto;'>";
+            strBody += Environment.NewLine;
+            strBody += "<p style='text-align:center'><img alt='' src='https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.shutterstock.com%2Fsearch%2Fthank-you-logo&psig=AOvVaw3Q0wwsqAWK17w16IlTlBj_&ust=1692116197961000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCOCu-a3G3IADFQAAAAAdAAAAABAE' style='height:89px; width:400px'/></p>";
+            strBody += "<p>Xin Chào : " + email + "</p>";
+            strBody += "<div style = 'width: 500px;height: 60px; display: flex; margin-top:30px; border-radius: 10px;'>";
+            strBody += "<span style = 'color: #66CC33; font-size: 30px;margin-left: 195px; margin-top:12px; letter-spacing: 15px;'>ĐẶT HÀNG THÀNH CÔNG</span></div>";
+            strBody += "<hr style='border-top: 2px solid #bbb; margin-top: 10px'>";
+            strBody += "<p><strong>KHÔNG CHIA SẺ</strong></p>";
+            strBody += "<p>Email này chứa một mã bảo mật của LEBAOTU-COMPANY, vui lòng không chia sẻ email hoặc mã bảo mật này với người khác</p>";
+            strBody += "<strong>CÂU HỎI KHÁC </strong>";
+            strBody += "<p> Nếu bạn cần sửa đổi hoặc có câu hỏi về nội dung thông báo,vui lòng liên hệ LEBAOTU-COMPANY qua các kênh sau: Hotline: <b>0388334379</b> Hộp thư điện tử: <b>lebaotu05122002@gmail.com</b></p>";
+            strBody += "</body></html >";
+            return strBody;
         }
 
         public async Task<Response> UpdateOrder(OrderCreateModel OrderModel)
