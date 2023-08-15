@@ -164,7 +164,7 @@ namespace Business.Comment
         {
             try
             {
-                var data = await _myDbContext.Comment.ToListAsync();
+                var data = await _myDbContext.Comment.Include(x => x.Account).Include(x => x.Product).ToListAsync();
                 data = sort switch
                 {
                     var t when t.Equals("question_asc") => data.OrderBy(x => x.Question).ToList(),

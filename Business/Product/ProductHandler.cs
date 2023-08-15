@@ -360,7 +360,7 @@ namespace Business.Product
         {
             try
             {
-                var data = await _myDbContext.Product.ToListAsync();
+                var data = await _myDbContext.Product.Include(c => c.Category).ToListAsync();
                 data = sort switch
                 {
                     var t when t.Equals("productid_asc") => data.OrderBy(x => x.ProductId).ToList(),

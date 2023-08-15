@@ -79,9 +79,9 @@ namespace eProject_Sem4
                     #region Đặt lịch
                     new RateLimitRule
                     {
-                        Endpoint = "post:/api/booking/simple",
+                        Endpoint = "post:/api/User/login",
                         Period = "1m",
-                        Limit = 1
+                        Limit = 3
                     },
                     #endregion Đặt lịch
                 };

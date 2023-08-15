@@ -26,7 +26,7 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
+        
         [HttpGet]
         [Route("getall-category")]
         [ProducesResponseType(typeof(ResponseObject<List<CategoryCreateModel>>), StatusCodes.Status200OK)]
@@ -82,6 +82,7 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("create-category")]
         [ProducesResponseType(typeof(ResponseObject<CategoryCreateModel>), StatusCodes.Status200OK)]
@@ -95,6 +96,7 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("update-category")]
         [ProducesResponseType(typeof(ResponseObject<CategoryCreateModel>), StatusCodes.Status200OK)]
@@ -108,6 +110,7 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("delete-category")]
         [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]
