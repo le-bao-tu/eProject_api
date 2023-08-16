@@ -49,8 +49,11 @@ namespace Business.Order
         public string? Feedback { get; set; }
 
         public Guid? AccountId { get; set; }
+
         public virtual Data.DataModel.Account? Account { get; set; }
 
         public virtual List<Data.DataModel.OrderDetail>? ListOrderDetail { get; set; }
+
+        public virtual List<Data.DataModel.Product>? ListProduct { get; set; }
     }
 }

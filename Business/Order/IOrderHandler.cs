@@ -66,5 +66,13 @@ namespace Business.Order
 
 
         Task<Response> UpdateOrderState(Guid orderId, int state, string cancelationReason);
+
+
+        /// <summary>
+        /// lấy danh sách đơn hàng theo trạng thái 
+        /// </summary>
+        /// <param name="orderStatus"></param>
+        /// <returns></returns>
+        Task<Response> GetListStateOrder(int? stateOrder);
     }
 }

@@ -28,6 +28,15 @@ namespace eProject_Sem4.Controllers
             return Ok(await _orderHandler.getAllOrder(model));
         }
 
+        [HttpGet]
+        /*[Authorize]*/
+        [Route("getlist-state-order")]
+        [ProducesResponseType(typeof(ResponseObject<List<OrderCreateModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetListStateOrder([FromQuery] int? state)
+        {
+            return Ok(await _orderHandler.GetListStateOrder(state));
+        }
+
         /// <summary>
         /// sắp xếp 
         /// </summary>
