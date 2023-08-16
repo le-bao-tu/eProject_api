@@ -1,11 +1,14 @@
 ﻿using Business.AddressAccount;
 using Data;
+using Data.DataModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Business.Order
 {
@@ -61,13 +64,38 @@ namespace Business.Order
                 }
 
                 var data = await _myDbContext.Order.Include(x => x.Account).FirstOrDefaultAsync(x => x.OrderId.Equals(OrderId));
+
                 if (data == null)
                 {
                     return new ResponseError(Code.ServerError, "Không tồn tại thông tin đơn hàng!");
                 }
+                var listProductOrder = await _myDbContext.OrderDetail.Where(x => x.OrderId == data.OrderId).ToListAsync();
+                var listPro = new List<Data.DataModel.Product>();
+                foreach (var item in listProductOrder)
+                {
+                    var product = await _myDbContext.Product.FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
+                    if(product != null)
+                    {
+                        listPro.Add(product);
+                    }
+                }
 
-                var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Order, OrderCreateModel>(data);
-                return new ResponseObject<OrderCreateModel>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+                var orderDetail = new OrderCreateModel();
+                orderDetail.OrderId = data.OrderId;
+                orderDetail.TotalPrice = data.TotalPrice;
+                orderDetail.Phone  = data.Phone;
+                orderDetail.Email = data.Email;
+                orderDetail.Address = data.Address;
+                orderDetail.CreatedDate = data.CreatedDate;
+                orderDetail.UpdatedDate = data.UpdatedDate;
+                orderDetail.State = data.State;
+                orderDetail.CancellationReason = data.CancellationReason;
+                orderDetail.Feedback = data.Feedback;
+                orderDetail.AccountId = data.AccountId;
+                orderDetail.Account = data.Account;
+                orderDetail.ListProduct = listPro;
+
+                return new ResponseObject<OrderCreateModel>(orderDetail, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {
@@ -94,6 +122,7 @@ namespace Business.Order
                 }
 
                 OrderModel.CreatedDate = DateTime.Now;
+                OrderModel.State = 0;
 
                 var dataMap = AutoMapperUtils.AutoMap<OrderCreateModel, Data.DataModel.Order>(OrderModel);
                 _myDbContext.Order.Add(dataMap);
@@ -132,7 +161,7 @@ namespace Business.Order
                     MailMessage message = new MailMessage(from, to);
                     message.IsBodyHtml = true;
                     message.Subject = "LEBAOTU - COMPANY";
-                    message.Body = bodyEmail(ms);
+                    message.Body = bodyEmail(OrderModel.OrderId,ms);
                     message.BodyEncoding = Encoding.UTF8;
                     message.IsBodyHtml = true;
                     SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp
@@ -161,16 +190,17 @@ namespace Business.Order
         }
 
 
-        public string bodyEmail(string email)
+        public string bodyEmail(Guid? orderId , string email)
         {
             string strBody = string.Empty;
             strBody += "<html><head> </head>";
-            strBody += "<body  style='width: 500px; border: solid 2px #888; padding: 20px; margin: auto;'>";
+            strBody += "<body  style='width: 500px; padding: 20px; margin: auto;'>";
             strBody += Environment.NewLine;
-            strBody += "<p style='text-align:center'><img alt='' src='https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.shutterstock.com%2Fsearch%2Fthank-you-logo&psig=AOvVaw3Q0wwsqAWK17w16IlTlBj_&ust=1692116197961000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCOCu-a3G3IADFQAAAAAdAAAAABAE' style='height:89px; width:400px'/></p>";
-            strBody += "<p>Xin Chào : " + email + "</p>";
+            strBody += "<p style='text-align:center'><img alt='' src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjZgrW6IToomMQ12q_EKCFBclSVdCEWc0GvQ&usqp=CAU'/></p>";
+            strBody += "<p>Xin Chào : " + email + " Bạn vừa : </p>";
             strBody += "<div style = 'width: 500px;height: 60px; display: flex; margin-top:30px; border-radius: 10px;'>";
-            strBody += "<span style = 'color: #66CC33; font-size: 30px;margin-left: 195px; margin-top:12px; letter-spacing: 15px;'>ĐẶT HÀNG THÀNH CÔNG</span></div>";
+            strBody += "<span style = 'color: #66CC33; font-size: 15px;margin-left: 80px; margin-top:8px; letter-spacing: 10px;font-weight: 600;'>ĐẶT HÀNG THÀNH CÔNG</span></div>";
+            strBody += "<p> Mã đơn hàng của bạn là : "+ orderId + " </p>";
             strBody += "<hr style='border-top: 2px solid #bbb; margin-top: 10px'>";
             strBody += "<p><strong>KHÔNG CHIA SẺ</strong></p>";
             strBody += "<p>Email này chứa một mã bảo mật của LEBAOTU-COMPANY, vui lòng không chia sẻ email hoặc mã bảo mật này với người khác</p>";
@@ -360,7 +390,7 @@ namespace Business.Order
         {
             try
             {
-                var data = await _myDbContext.Order.ToListAsync();
+                var data = await _myDbContext.Order.Include(x => x.Account).ToListAsync();
                 data = sort switch
                 {
                     var t when t.Equals("orderid_asc") => data.OrderBy(x => x.OrderId).ToList(),
@@ -373,6 +403,34 @@ namespace Business.Order
                 _logger.LogInformation($"{Message.GetDataSuccess}");
                 var dataMap = AutoMapperUtils.AutoMap<Data.DataModel.Order, OrderCreateModel>(data);
                 return new ResponseObject<List<OrderCreateModel>>(dataMap, $"{Message.GetDataSuccess}", Code.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message + Message.ErrorLogMessage);
+                return new ResponseError(Code.ServerError, $"{ex.Message}");
+            }
+        }
+
+        public async Task<Response> GetListStateOrder(int? stateOrder)
+        {
+            try
+            {
+                if(stateOrder == null)
+                {
+                    return new ResponseError(Code.BadRequest, "Thông tin orderStatus không được để trống");
+                }
+                var data = stateOrder switch
+                {
+                    var t when t == 0 => await _myDbContext.Order.Include(x => x.Account).Where(x => x.State == 0).ToListAsync(),
+                    var t when t == 1 => await _myDbContext.Order.Include(x => x.Account).Where(x => x.State == 1).ToListAsync(),
+                    var t when t == 2 => await _myDbContext.Order.Include(x => x.Account).Where(x => x.State == 2).ToListAsync(),
+                    var t when t == 3 => await _myDbContext.Order.Include(x => x.Account).Where(x => x.State == 3).ToListAsync(),
+                    var t when t == 4 => await _myDbContext.Order.Include(x => x.Account).Where(x => x.State == 4).ToListAsync(),
+                    _ => null
+                };
+
+                _logger.LogInformation($"{Message.GetDataSuccess}");
+                return new ResponseObject<List<Data.DataModel.Order>>(data, $"{Message.GetDataSuccess}", Code.Success);
             }
             catch (Exception ex)
             {
