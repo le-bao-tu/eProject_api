@@ -79,6 +79,7 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="userModel"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("create-user")]
         [ProducesResponseType(typeof(ResponseObject<UserCreateModel>), StatusCodes.Status200OK)]
@@ -158,6 +159,7 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("update-user")]
         [ProducesResponseType(typeof(ResponseObject<UserCreateModel>), StatusCodes.Status200OK)]
