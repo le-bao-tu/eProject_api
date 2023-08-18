@@ -1,6 +1,8 @@
 ﻿using Business.Order;
 using Business.Product;
+using Data.DataModel;
 using EasyCaching.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -60,6 +62,7 @@ namespace eProject_Sem4.Controllers
             return Ok(await _productHandler.searchProduct(model, name, quantity, priceMin, priceMax, address, status, categoryId));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("create-product")]
         [ProducesResponseType(typeof(ResponseObject<ProductCreateModel>), StatusCodes.Status200OK)]
@@ -68,6 +71,7 @@ namespace eProject_Sem4.Controllers
             return Ok(await _productHandler.CreateProduct(model));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("update-product")]
         [ProducesResponseType(typeof(ResponseObject<ProductCreateModel>), StatusCodes.Status200OK)]
@@ -76,6 +80,7 @@ namespace eProject_Sem4.Controllers
             return Ok(await _productHandler.UpdateProduct(model));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("delete-product")]
         [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]

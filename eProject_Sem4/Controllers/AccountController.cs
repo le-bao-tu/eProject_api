@@ -1,6 +1,8 @@
 ﻿using Business.Account;
 using Business.Category;
+using Data.DataModel;
 using EasyCaching.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -102,6 +104,7 @@ namespace eProject_Sem4.Controllers
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("delete-account")]
         [ProducesResponseType(typeof(ResponseObject<Guid>), StatusCodes.Status200OK)]

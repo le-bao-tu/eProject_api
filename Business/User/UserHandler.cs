@@ -44,7 +44,7 @@ namespace Business.User
                 {
                     if (!Regex.IsMatch(userModel.Birthday, Regexs.DateFormatRule))
                     {
-                        return new ResponseError(Code.BadRequest, "Nhập sai dữ liệu ngày tháng năm (dd/MM/yyyy)");
+                        return new ResponseError(Code.BadRequest, "Nhập sai dữ liệu ngày tháng năm (dd/MM/yyyy)"); 
                     }
                 }
 

@@ -2,6 +2,7 @@
 using Business.Order;
 using Business.OrderDetail;
 using Business.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -20,7 +21,6 @@ namespace eProject_Sem4.Controllers
 
 
         [HttpGet]
-        /*[Authorize]*/
         [Route("getall-order")]
         [ProducesResponseType(typeof(ResponseObject<List<OrderCreateModel>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllOrder([FromQuery] PageModel model)
@@ -67,6 +67,7 @@ namespace eProject_Sem4.Controllers
             return Ok(await _orderHandler.CreateOrder(model));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("update-order")]
         [ProducesResponseType(typeof(ResponseObject<OrderCreateModel>), StatusCodes.Status200OK)]
@@ -74,6 +75,7 @@ namespace eProject_Sem4.Controllers
         {
             return Ok(await _orderHandler.UpdateOrder(model));
         }
+
 
         [HttpPost]
         [Route("update-order-state")]
